@@ -4,7 +4,7 @@
 
 Notes:
 
-Which FLow Match Fileds will work best:
-  VLAN id?
-  Metadata?
-  Aim to use as much existing infrastructure as possible, these will ease with 
+Which Flow Match Fields will work best:
+  -VLAN id?
+  -Metadata?
+  -Aim to use as much existing infrastructure as possible, these will ease with future integration and reduce complexities. 
