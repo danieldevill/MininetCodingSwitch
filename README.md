@@ -18,3 +18,14 @@ Notes on running iPerf in Multicast mode:
 		-cdm: iperf -s -B 244.0.67.67 -u , this binds the server to the multicast group under UDP.
 
 	* Client: iperf -c 244.0.67.67 -u -t 5 -P 2 --ttl 5, this sends 2 streams to the multicast group.
+
+
+## Already Working:
+
+* OpenFlow switch, adds flow tables and only calls controller when flow not recognised. 
+
+## TO do:
+
+* Use VLAN tag to forward packets to kodo NC program.
+* Check for VLAN tags,
+* NC module must do encoding and remove VLAN tags.
