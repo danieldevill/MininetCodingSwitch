@@ -30,3 +30,8 @@ Notes on running iPerf in Multicast mode:
 * Check for VLAN tags,:
 	* Generate Vlan tags with a packet generator, and add flow table rule to check for them.
 * NC module must do encoding and remove VLAN tags.
+
+## To connect to Mininet from host with rsub support:
+
+* ssh -X -R 52698:localhost:52698 daniel@localhost -p 10022
+* rsub filename
