@@ -1,0 +1,23 @@
+#!/bin/bash
+
+#MininetCodingSwitch workflow setup script.
+
+#Run mininet in QEMU vm with rocker
+#start qemu debian vm image
+sudo nohup qemu-system-x86_64 /var/lib/libvirt/images/ubuntu7.qcow2 \
+-accel kvm \
+-m size=4G \
+-net nic -net user,hostfwd=tcp::10022-:22 \
+-device rocker,id=sw1,name=sw1,len-ports=4,ports[0]=dev0,ports[1]=dev1,ports[2]=dev2,ports[3]=dev3 \
+-netdev tap,id=dev0,ifname=tap0 \
+-netdev tap,id=dev1,ifname=tap1 \
+-netdev tap,id=dev2,ifname=tap2 \
+-netdev tap,id=dev3,ifname=tap3 &>/dev/null &
+
+#Backup mininet working to Dropbox folder periodically
+while true
+do
+	sleep 600
+	sudo sshpass -p 'maxandbella1' scp -P 10022 -r daniel@localhost:/home/daniel/* ~/Dropbox/Academics/MEng/Working/MininetCodingSwitch
+done
+

@@ -1,0 +1,10 @@
+#!/bin/bash
+
+#Setup rsub links
+#rsub mininet/custom/butterfly.py
+#rsub mn_conf
+
+#start mininet
+sudo mn --custom ~/mininet/custom/butterfly.py --topo butterflytopo_s1 --mac --switch ovsk \
+--test multicasttest \
+#--controller remote 
