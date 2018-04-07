@@ -35,3 +35,7 @@ Notes on running iPerf in Multicast mode:
 
 * ssh -X -R 52698:localhost:52698 daniel@localhost -p 10022
 * rsub filename
+
+## To start POX controller with coding switch
+
+* ./pox.py log.level --DEBUG misc.coding_switch
