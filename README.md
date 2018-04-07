@@ -46,3 +46,4 @@ Notes on running iPerf in Multicast mode:
 * Scapy is a packet generating python program.
 * To send 10 VLAN ethernet packets from h1 to h2: Do this in xterm
 	* sendp(Ether(type=0x8100,src="00:00:00:00:00:01",dst="00:00:00:00:00:02")/"Test",count=10)
+	
