@@ -38,7 +38,14 @@ Notes on running iPerf in Multicast mode:
 
 ## To start POX controller with coding switch
 
-* ./pox.py log.level --DEBUG misc.coding_switch
+* pox/pox.py log.level --DEBUG misc.coding_switch
+
+## To start mininet
+
+* With standard setup
+	* sudo mn --topo single,3 --mac --switch ovsk --controller remote
+* With custom topo:
+	* sudo mn --custom ~/mininet/custom/butterfly.py --topo butterflytopo --mac --switch ovsk --controller remote
 
 ## Scapy packet generator:
 
