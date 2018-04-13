@@ -55,3 +55,13 @@ Notes on running iPerf in Multicast mode:
 	* sendp(Ether(type=0x8100,src="00:00:00:00:00:01",dst="00:00:00:00:00:02")/"Test",count=10)
 	* OR use the sudo python l2_vlan.py 
 	* the scapy folder contains all scapy scripts used.
+
+## Netlink
+
+* Worked on using Netlink to interface with the ovs kernel module to implement a userspace packet processor. 
+* Looked at Generic netlink in C (libnl), Python (Facebook Netlink module) and Go (go-openvswitch osnl)
+* However, there is little documentation (Besides the source code) that details how netlink can be used to write user specific applications by processing the packets from the ovs kernel module. 
+* The Go package (go-openvswitch) provides the closest implementation, however it stops after Datapath operations. 
+* I modified the package to add support for packet specific commands but receving a "Operation Not Permitted" error.
+* I am going to Look at using DPDK with ovs instead, as it is better documented and suited for use in developing userspace applications with ovs, as well as the possibility of adding hardware offloading as DPDK supports some form of this. 
+* Also DPDK is well documented!
