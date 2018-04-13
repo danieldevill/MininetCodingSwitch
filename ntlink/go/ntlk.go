@@ -3,8 +3,7 @@ package main
 import (		
 	"fmt"
 	"os"
-
-	"github.com/digitalocean/go-openvswitch/ovsnl"
+	"./go-openvswitch/ovsnl"
 )
 
 func main() {
@@ -24,6 +23,20 @@ func main() {
 	// Be sure to close the generic netlink connection!
 	defer c.Close()
 
+	//List packets?
+	pkts, err := c.Datapath.List()
+	if err != nil {
+		fmt.Printf("failed to list packets: %v", err)
+	}
+
+	for _, p := range pkts {
+		fmt.Printf("packets: %q", p.Name)
+	}
+
+
+	fmt.Printf("\n")
+
+
 	// List available OVS datapaths.
 	dps, err := c.Datapath.List()
 	if err != nil {
@@ -34,4 +47,5 @@ func main() {
 		fmt.Printf("datapath: %q, flows: %d", d.Name, d.Stats.Flows)
 	}
 
+    fmt.Println("\nStopping go")
 }

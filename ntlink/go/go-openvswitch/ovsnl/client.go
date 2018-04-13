@@ -20,7 +20,8 @@ import (
 	"strings"
 	"unsafe"
 
-	"github.com/digitalocean/go-openvswitch/ovsnl/internal/ovsh"
+	"./ovsh"
+
 	"github.com/mdlayher/genetlink"
 )
 
@@ -36,6 +37,9 @@ const (
 type Client struct {
 	// Datapath provides access to DatapathService methods.
 	Datapath *DatapathService
+
+	//Mod by Daniel.
+	Packet *PacketService
 
 	c *genetlink.Conn
 }
@@ -118,7 +122,13 @@ func (c *Client) initFamily(f genetlink.Family) error {
 			c: c,
 		}
 		return nil
-	case ovsh.FlowFamily, ovsh.PacketFamily, ovsh.VportFamily:
+	case ovsh.PacketFamily: //Mod by Daniel.
+		c.Packet = &PacketService{
+			f: f,
+			c: c,
+		}
+		return nil
+	case ovsh.FlowFamily, ovsh.VportFamily:
 		// TODO(mdlayher): populate.
 		return nil
 	}

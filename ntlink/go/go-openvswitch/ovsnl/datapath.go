@@ -12,13 +12,21 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+// Being modified by @author: Daniel de Villiers.
+// I am trying to add support for retrieving packet information directly from the kernel
+// module of ovs. This go package provides the required link via netlink. I am using the datapath.go
+// File as a template for packet processing. A lot of the ground work has already been done
+// for me, the only problem is that it is in GO. So I have to learn a bit of Go first (Or just follow the pattern). 
+
+
 package ovsnl
 
 import (
 	"fmt"
 	"unsafe"
 
-	"github.com/digitalocean/go-openvswitch/ovsnl/internal/ovsh"
+	"./ovsh"
+
 	"github.com/mdlayher/genetlink"
 	"github.com/mdlayher/netlink"
 	"github.com/mdlayher/netlink/nlenc"
@@ -31,6 +39,12 @@ type DatapathService struct {
 	f genetlink.Family
 }
 
+//Mod by Daniel
+type PacketService struct {
+	c *Client
+	f genetlink.Family
+}
+
 // A Datapath is an Open vSwitch in-kernel datapath.
 type Datapath struct {
 	Index         int
@@ -38,6 +52,15 @@ type Datapath struct {
 	Features      DatapathFeatures
 	Stats         DatapathStats
 	MegaflowStats DatapathMegaflowStats
+}
+
+//Mod by Daniel for Packet struct
+type Packet struct {
+	Index         int
+	Packet        string
+//	Actions       string
+//	Key           string
+//	Userdata      string				
 }
 
 // DatapathFeatures is a set of bit flags that specify features for a datapath.
@@ -118,6 +141,28 @@ func (s *DatapathService) List() ([]Datapath, error) {
 	return parseDatapaths(msgs)
 }
 
+// Mod by Daniel. Lists packets?
+func (s *PacketService) PktList() ([]Packet, error) {
+	req := genetlink.Message{
+		Header: genetlink.Header{
+			Command: ovsh.PacketCmdAction,
+			Version: uint8(s.f.Version),
+		},
+		// Query all packets.
+		Data: headerBytes(ovsh.Header{
+			Ifindex: 0,
+		}),
+	}
+
+	flags := netlink.HeaderFlagsRequest | netlink.HeaderFlagsDump
+	msgs, err := s.c.c.Execute(req, s.f.ID, flags)
+	if err != nil {
+		return nil, err
+	}
+
+	return parsePackets(msgs)
+}
+
 // parseDatapaths parses a slice of Datapaths from a slice of generic netlink
 // messages.
 func parseDatapaths(msgs []genetlink.Message) ([]Datapath, error) {
@@ -163,6 +208,40 @@ func parseDatapaths(msgs []genetlink.Message) ([]Datapath, error) {
 	}
 
 	return dps, nil
+}
+
+//Mod by Daniel. ParsePackets
+func parsePackets(msgs []genetlink.Message) ([]Packet, error) {
+	pkts := make([]Packet, 0, len(msgs))
+
+	for _, m := range msgs {
+		// Fetch the header at the beginning of the message.
+		h, err := parseHeader(m.Data)
+		if err != nil {
+			return nil, err
+		}
+
+		pkt := Packet{
+			Index: int(h.Ifindex),
+		}
+
+		// Skip the header to parse attributes.
+		attrs, err := netlink.UnmarshalAttributes(m.Data[sizeofHeader:])
+		if err != nil {
+			return nil, err
+		}
+
+		for _, a := range attrs {
+			switch a.Type {
+			case ovsh.DpAttrName:
+				pkt.Packet = nlenc.String(a.Data)
+			}
+		}
+
+		pkts = append(pkts, pkt)
+	}
+
+	return pkts, nil
 }
 
 // parseDPStats converts a byte slice into DatapathStats.
