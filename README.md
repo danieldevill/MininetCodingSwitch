@@ -65,3 +65,13 @@ Notes on running iPerf in Multicast mode:
 * I modified the package to add support for packet specific commands but receving a "Operation Not Permitted" error.
 * I am going to Look at using DPDK with ovs instead, as it is better documented and suited for use in developing userspace applications with ovs, as well as the possibility of adding hardware offloading as DPDK supports some form of this. 
 * Also DPDK is well documented!
+
+## DPDK
+
+* Datapath development kit is a packet processing layer that works with ovs.
+* This should enable me to add a processing path.
+
+
+sudo ovs-vsctl add-br br0 -- set bridge br0 datapath_type=netdev
+sudo ovs-vsctl add-port br0 vhost-user1 -- set Interface vhost-user1 type=dpdkvhostuser
+sudo ovs-vsctl add-port br0 vhost-user2 -- set Interface vhost-user2 type=dpdkvhostuser

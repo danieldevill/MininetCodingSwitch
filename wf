@@ -6,7 +6,7 @@
 #start qemu debian vm image
 sudo nohup qemu-system-x86_64 /var/lib/libvirt/images/ubuntu7.qcow2 \
 -accel kvm \
--m size=4G \
+-m size=6G \
 -net nic -net user,hostfwd=tcp::10022-:22 \
 -device rocker,id=sw1,name=sw1,len-ports=4,ports[0]=dev0,ports[1]=dev1,ports[2]=dev2,ports[3]=dev3 \
 -netdev tap,id=dev0,ifname=tap0 \
