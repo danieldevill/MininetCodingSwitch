@@ -4,10 +4,18 @@
 
 #Run mininet in QEMU vm with rocker
 #start qemu debian vm image
-sudo nohup qemu-system-x86_64 /var/lib/libvirt/images/ubuntu7.qcow2 \
+sudo nohup qemu-system-x86_64 /var/lib/libvirt/images/mininet.qcow2 \
 -accel kvm \
 -m size=6G \
 -net nic -net user,hostfwd=tcp::10022-:22 \
+-device e1000,id=eth1 \
+-device e1000,id=eth2 \
+-device e1000,id=eth3 \
+-device e1000,id=eth4 \
+-netdev tap,id=eth1,ifname=nic1 \
+-netdev tap,id=eth2,ifname=nic2 \
+-netdev tap,id=eth3,ifname=nic3 \
+-netdev tap,id=eth4,ifname=nic4 \
 -device rocker,id=sw1,name=sw1,len-ports=4,ports[0]=dev0,ports[1]=dev1,ports[2]=dev2,ports[3]=dev3 \
 -netdev tap,id=dev0,ifname=tap0 \
 -netdev tap,id=dev1,ifname=tap1 \
@@ -18,6 +26,6 @@ sudo nohup qemu-system-x86_64 /var/lib/libvirt/images/ubuntu7.qcow2 \
 while true
 do
 	sleep 600
-	sudo sshpass -p 'maxandbella1' scp -P 10022 -r daniel@localhost:/home/daniel/* ~/Dropbox/Academics/MEng/Working/MininetCodingSwitch
+	sudo sshpass -p 'maxandbella1' scp -P 10022 -r mininet@localhost:/home/mininet/* ~/Dropbox/Academics/MEng/Working/MininetCodingSwitch
 done
 

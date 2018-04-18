@@ -33,7 +33,7 @@ Notes on running iPerf in Multicast mode:
 
 ## To connect to Mininet from host with rsub support:
 
-* ssh -X -R 52698:localhost:52698 daniel@localhost -p 10022
+* ssh -X -R 52698:localhost:52698 mininet@localhost -p 10022
 * rsub filename
 
 ## To start POX controller with coding switch
