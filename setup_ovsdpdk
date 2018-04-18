@@ -1,0 +1,24 @@
+#!/bin/bash
+
+#Start OVS with DPDK setup. 
+
+#Add hugepages. Specifically 4GB of 2mb page files
+sudo  bash -c "echo 2048 > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages"
+
+#Clean ovs enviroment
+killall ovsdb-server ovs-vswitchd
+sudo rm -f /var/run/openvswitch/vhost-user*
+sudo rm -f /etc/openvswitch/conf.db
+
+#Start ovsdb
+export DB_SOCK=/var/run/openvswitch/db.sock
+sudo ovsdb-tool create /etc/openvswitch/conf.db /usr/share/openvswitch/vswitch.ovsschema
+sudo ovsdb-server --remote=punix:$DB_SOCK --remote=db:Open_vSwitch,Open_vSwitch,manager_options --pidfile --detach
+
+#Start OVS
+sudo ovs-vsctl --no-wait init
+sudo ovs-vsctl --no-wait set Open_vSwitch . other_config:dpdk-init=true
+sudo ovs-vswitchd unix:$DB_SOCK --pidfile --detach --log-file=/var/log/openvswitch/ovs-vswitchd.log
+
+
+

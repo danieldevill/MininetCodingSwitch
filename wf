@@ -7,6 +7,7 @@
 sudo nohup qemu-system-x86_64 /var/lib/libvirt/images/mininet.qcow2 \
 -accel kvm \
 -m size=6G \
+-cpu qemu64,+ssse3,+sse4.1,+sse4.2,+x2apic \
 -net nic -net user,hostfwd=tcp::10022-:22 \
 -device e1000,id=eth1 \
 -device e1000,id=eth2 \

@@ -70,8 +70,7 @@ Notes on running iPerf in Multicast mode:
 
 * Datapath development kit is a packet processing layer that works with ovs.
 * This should enable me to add a processing path.
-
-
-sudo ovs-vsctl add-br br0 -- set bridge br0 datapath_type=netdev
-sudo ovs-vsctl add-port br0 vhost-user1 -- set Interface vhost-user1 type=dpdkvhostuser
-sudo ovs-vsctl add-port br0 vhost-user2 -- set Interface vhost-user2 type=dpdkvhostuser
+* Added a script to setup ovs with dpdk at start. (Mininet does not have dpdk support at boot): setup_ovsdpdk
+* To do: 
+	* Make minnet ports type dpdk 
+	* Run dpdk sample applications
