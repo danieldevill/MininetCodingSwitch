@@ -74,3 +74,11 @@ Notes on running iPerf in Multicast mode:
 * To do: 
 	* Make minnet ports type dpdk 
 	* Run dpdk sample applications
+* Hugepages must be configed before any application can run.
+* To make interfaces use DPDK drivers instead of generic:
+	* sudo modprobe uio_pci_generic
+	* sudo ./usertools/dpdk-devbind.py --bind=uio_pci_generic eth1
+	* And to view: ./usertools/dpdk-devbind.py --status
+* TO assign ports in OVS to dpdk:
+	*sudo ovs-vsctl add-port br0 ens4 -- set Interface ens4 type=dpdk options:dpdk-devargs=0000:04:00.0 
+	*However this is not working...
