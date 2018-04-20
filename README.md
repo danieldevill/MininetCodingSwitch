@@ -76,9 +76,29 @@ Notes on running iPerf in Multicast mode:
 	* Run dpdk sample applications
 * Hugepages must be configed before any application can run.
 * To make interfaces use DPDK drivers instead of generic:
-	* sudo modprobe uio_pci_generic
-	* sudo ./usertools/dpdk-devbind.py --bind=uio_pci_generic eth1
+	* sudo modprobe uio
+	* sudo instmod $RTE_SDK/build/kmod/igb_uio.ko
+	* sudo $RTE_SDK/usertools/dpdk-devbind.py --bind=igb_uio eth1
 	* And to view: ./usertools/dpdk-devbind.py --status
-* TO assign ports in OVS to dpdk:
-	*sudo ovs-vsctl add-port br0 ens4 -- set Interface ens4 type=dpdk options:dpdk-devargs=0000:04:00.0 
-	*However this is not working...
+* setup_ovsdpdk now does all device config and binding with dpdk and ovs.
+	* To add: 
+		* Add ovs flows between ports?
+		* They are bridged but no flows exist?
+	* Use the --file-prefix EAL if getting .rte_config classes.
+* Packets not sending in testpmd because:
+	* There is a kernel error where:
+		[  109.630804] igb_uio: loading out-of-tree module taints kernel.
+		[  109.630835] igb_uio: module verification failed: signature and/or required key missing - tainting kernel
+		[  109.631422] igb_uio: Use MSIX interrupt by default
+		[  109.938565] igb_uio 0000:00:04.0: mapping 1K dma=0x1b5b5f000 host=ffff907fb5b5f000
+		[  109.938568] igb_uio 0000:00:04.0: unmapping 1K dma=0x1b5b5f000 host=ffff907fb5b5f000
+		[  109.941223] igb_uio 0000:00:04.0: uio device registered with irq a
+		[  110.068260] igb_uio 0000:00:05.0: mapping 1K dma=0x1b491c000 host=ffff907fb491c000
+		[  110.068262] igb_uio 0000:00:05.0: unmapping 1K dma=0x1b491c000 host=ffff907fb491c000
+		[  112.634455] device br0 left promiscuous mode
+		[  112.634486] device ovs-netdev left promiscuous mode
+		[  113.178974] igb_uio 0000:00:04.0: uio device registered with irq a
+		[  113.482514] igb_uio 0000:00:05.0: uio device registered with irq a
+		[  113.798373] device ovs-netdev entered promiscuous mode
+		[  113.799513] device br0 entered promiscuous mode
+	* Trying to add this to grub kernel: iommu=pt intel_iommu=off
