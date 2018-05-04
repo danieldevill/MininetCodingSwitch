@@ -110,4 +110,6 @@ z
 * Ethtool:
 	* sudo $RTE_SDK/examples/ethtool/ethtool-app/x86_64-native-linuxapp-gcc/ethtool -l 1 -m 100 --file-prefix ethl
 * Skeleton (basicfwd):
-	* sudo $RTE_SDK/examples/skeleton/build/basicfwd -l 1 -n 4 -m 100 --file-prefix ske
+	* sudo $RTE_SDK/examples/skeleton1/build/basicfwd -l 1 -n 4 -m 100 --file-prefix ske
+* l2fwd:
+	* sudo ./l2fwd -l 1,2 -n 4 --file-prefix l2  -- -p 0x3

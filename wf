@@ -32,7 +32,7 @@ sudo qemu-system-x86_64 /var/lib/libvirt/images/mininet.qcow2 \
 sleep 5
 
 #Start qemu hosts A and B:
-sudo qemu-system-x86_64 /var/lib/libvirt/images/debian9.qcow2 \
+sudo qemu-system-x86_64 -drive file=/var/lib/libvirt/images/debian9.qcow2,if=virtio -boot c \
 -accel kvm \
 -m size=256M \
 -cpu host,+ssse3,+sse4.1,+sse4.2,+x2apic \
@@ -40,7 +40,7 @@ sudo qemu-system-x86_64 /var/lib/libvirt/images/debian9.qcow2 \
 
 sleep 5
 
-sudo qemu-system-x86_64 /var/lib/libvirt/images/debian9_B.qcow2 \
+sudo qemu-system-x86_64 -drive file=/var/lib/libvirt/images/debian9-clone.qcow2,if=virtio -boot c \
 -accel kvm \
 -m size=256M \
 -cpu host,+ssse3,+sse4.1,+sse4.2,+x2apic \
