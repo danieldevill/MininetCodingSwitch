@@ -48,7 +48,7 @@ Notes on running iPerf in Multicast mode:
 	* sudo mn --custom ~/mininet/custom/butterfly.py --topo butterflytopo --mac --switch ovsk --controller remote
 
 ## Scapy packet generator:
-
+z
 * To start: sudo .local/bin/scapy
 * Scapy is a packet generating python program.
 * To send 10 VLAN ethernet packets from h1 to h2: Do this in xterm
@@ -102,3 +102,12 @@ Notes on running iPerf in Multicast mode:
 		[  113.798373] device ovs-netdev entered promiscuous mode
 		[  113.799513] device br0 entered promiscuous mode
 	* Trying to add this to grub kernel: iommu=pt intel_iommu=off
+* VFIO driver is for turning a VM into a userspace driver. Cant use VFIO within a vm. 
+* uio_pci_generic seems to be returning no errors? Still cant get packets to forward
+* Add ifconfig after port creation??
+* Testpmd:
+	* sudo testpmd –l 0-3 –n 4 -d librte_pmd_virtio.so --file-prefix=daniel -- -i --rxq=1 --txq=1 --rxd=256 --txd=25
+* Ethtool:
+	* sudo $RTE_SDK/examples/ethtool/ethtool-app/x86_64-native-linuxapp-gcc/ethtool -l 1 -m 100 --file-prefix ethl
+* Skeleton (basicfwd):
+	* sudo $RTE_SDK/examples/skeleton/build/basicfwd -l 1 -n 4 -m 100 --file-prefix ske

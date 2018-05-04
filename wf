@@ -2,32 +2,62 @@
 
 #MininetCodingSwitch workflow setup script.
 
+#VM network config up.
+sudo ./ifup 
+
 #Run mininet in QEMU vm with rocker
 #start qemu debian vm image
-sudo nohup qemu-system-x86_64 /var/lib/libvirt/images/mininet.qcow2 \
+sudo qemu-system-x86_64 /var/lib/libvirt/images/mininet.qcow2 \
 -accel kvm \
--m size=6G \
+-m size=8G \
 -cpu host,+ssse3,+sse4.1,+sse4.2,+x2apic \
--smp 8 \
--net nic -net user,hostfwd=tcp::10022-:22 \
--device e1000,id=eth1 \
--device e1000,id=eth2 \
--device e1000,id=eth3 \
--device e1000,id=eth4 \
--netdev tap,id=eth1,ifname=nic1 \
--netdev tap,id=eth2,ifname=nic2 \
--netdev tap,id=eth3,ifname=nic3 \
--netdev tap,id=eth4,ifname=nic4 
+-smp 8 -numa node,nodeid=0  \
+-device e1000,vlan=0 -net user,name=net1,vlan=0,hostfwd=tcp::10022-:22 \
+-device e1000,vlan=1,mac=de:ad:be:ef:00:04 \
+-net tap,name=net2,vlan=1,ifname=ovs_tap1,script=no,downscript=no \
+-device e1000,vlan=1,mac=de:ad:be:ef:00:05 \
+-net tap,name=net3,vlan=1,ifname=ovs_tap2,script=no,downscript=no &
+# -device e1000,id=eth1 -netdev tap,id=eth1,ifname=ovs_tap1 \
+# -device e1000,id=eth2 -netdev tap,id=eth2,ifname=ovs_tap2 &
+#-device e1000,id=eth3 \
+#-device e1000,id=eth4 \
+#-netdev tap,id=eth3,ifname=ovs_nic3 \
+#-netdev tap,id=eth4,ifname=ovs_nic4 &		
 # -device rocker,id=sw1,name=sw1,len-ports=4,ports[0]=dev0,ports[1]=dev1,ports[2]=dev2,ports[3]=dev3 \
 # -netdev tap,id=dev0,ifname=tap0 \
 # -netdev tap,id=dev1,ifname=tap1 \
 # -netdev tap,id=dev2,ifname=tap2 \
 # -netdev tap,id=dev3,ifname=tap3 &>/dev/null &
 
-#Backup mininet working to Dropbox folder periodically
-while true
-do
-	sleep 600
-	sudo sshpass -p 'maxandbella1' scp -P 10022 -r mininet@localhost:/home/mininet/* ~/Dropbox/Academics/MEng/Working/MininetCodingSwitch
-done
+sleep 5
 
+#Start qemu hosts A and B:
+sudo qemu-system-x86_64 /var/lib/libvirt/images/debian9.qcow2 \
+-accel kvm \
+-m size=256M \
+-cpu host,+ssse3,+sse4.1,+sse4.2,+x2apic \
+-device e1000,vlan=0,mac=de:ad:be:ef:00:02 -net tap,vlan=0,ifname=debA_tap1,script=no,downscript=no &
+
+sleep 5
+
+sudo qemu-system-x86_64 /var/lib/libvirt/images/debian9_B.qcow2 \
+-accel kvm \
+-m size=256M \
+-cpu host,+ssse3,+sse4.1,+sse4.2,+x2apic \
+-device e1000,vlan=0,mac=de:ad:be:ef:00:03 -net tap,vlan=0,ifname=debB_tap1,script=no,downscript=no
+
+# sudo qemu-system-x86_64 /var/lib/libvirt/images/debian9_hostB.qcow2 \
+# -accel kvm \
+# -m size=512M \
+# -cpu host,+ssse3,+sse4.1,+sse4.2,+x2apic \
+# -device e1000,id=eth1 -netdev tap,id=eth1,ifname=debB_tap1
+
+#Backup mininet working to Dropbox folder periodically
+# while true
+# do
+# 	sleep 600
+# 	sudo sshpass -p 'maxandbella1' scp -P 10022 -r mininet@localhost:/home/mininet/* ~/Dropbox/Academics/MEng/Working/MininetCodingSwitch
+# done
+
+#Network config down
+sudo ./ifdown

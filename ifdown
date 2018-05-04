@@ -1,0 +1,14 @@
+#!/bin/sh
+set -x
+
+#Bring down bridges and delete
+ifconfig ovsbr1 down
+ifconfig ovsbr2 down
+brctl delbr ovsbr1
+brctl delbr ovsbr2
+
+#Delete TAP devices
+tunctl -d ovs_tap1
+tunctl -d ovs_tap2
+tunctl -d debA_tap1
+tunctl -d debB_tap1

@@ -1,0 +1,28 @@
+#!/bin/sh
+set -x
+
+#Create TAP devices
+tunctl -u daniel -t ovs_tap1
+tunctl -u daniel -t ovs_tap2
+tunctl -u daniel -t debA_tap1
+tunctl -u daniel -t debB_tap1
+
+#Bring up tap devices
+ip link set ovs_tap1 up
+ip link set ovs_tap2 up
+ip link set debA_tap1 up
+ip link set debB_tap1 up
+
+#Create bridge 1
+brctl addbr ovsbr1
+brctl addif ovsbr1 ovs_tap1
+brctl addif ovsbr1 debA_tap1
+
+# #Create bridge 2
+brctl addbr ovsbr2
+brctl addif ovsbr2 ovs_tap2
+brctl addif ovsbr2 debB_tap1
+
+#Bring up bridge
+ip link set ovsbr1 up
+ip link set ovsbr2 up
