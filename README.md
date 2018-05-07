@@ -112,4 +112,10 @@ z
 * Skeleton (basicfwd):
 	* sudo $RTE_SDK/examples/skeleton1/build/basicfwd -l 1 -n 4 -m 100 --file-prefix ske
 * l2fwd:
-	* sudo ./l2fwd -l 1,2 -n 4 --file-prefix l2  -- -p 0x3
+	* sudo $RTE_SDK/examples/l2fwd/build/l2fwd -l 1,2 -n 4 --file-prefix l2  -- -p 0x3
+
+## PcapPlusPlus
+
+* To monitor traffic on dpdk ports 0 and 1.
+* sudo PcapPlusPlus/Examples/DpdkExample-FilterTraffic/Bin/DpdkTrafficFilter -d 0,1
+* PcapPlusPlus is picking up packets from l2fwd!

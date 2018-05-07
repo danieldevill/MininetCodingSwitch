@@ -97,7 +97,7 @@ bool DpdkDeviceList::initDpdk(CoreMask coreMask, uint32_t mBufPoolSizePerDevice)
 	dpdkParamsStream << "pcapplusplusapp ";
 	dpdkParamsStream << "-n ";
 	dpdkParamsStream << "2 ";
-	dpdkParamsStream << "--file-prefix pcppMonitor "; //Edited by D.B.B de Villiers
+	dpdkParamsStream << "--file-prefix pcppMonitor -m 1024 "; //Edited by D.B.B de Villiers. Limit to 1GB of memory and set file prefix.
 	dpdkParamsStream << "-c ";
 	dpdkParamsStream << "0x" << std::hex << std::setw(2) << std::setfill('0') << coreMask << " ";
 	dpdkParamsStream << "--master-lcore ";

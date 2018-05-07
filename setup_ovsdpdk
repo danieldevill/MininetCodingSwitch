@@ -46,3 +46,6 @@ sudo ovs-ofctl add-flow br0 in_port=2,action=output:1
 sudo $RTE_SDK/usertools/dpdk-devbind.py -s
 sudo ovs-vsctl show
 sudo ovs-ofctl dump-flows br0
+
+#Print number of Hugepages
+grep Huge /proc/meminfo
