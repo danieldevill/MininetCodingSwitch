@@ -119,3 +119,7 @@ z
 * To monitor traffic on dpdk ports 0 and 1.
 * sudo PcapPlusPlus/Examples/DpdkExample-FilterTraffic/Bin/DpdkTrafficFilter -d 0,1
 * PcapPlusPlus is picking up packets from l2fwd!
+
+## Git sync:
+
+* sudo scp -P 10022 -r mininet@localhost:/home/mininet/* ~/Dropbox/Academics/MEng/Working/MininetCodingSwitch
