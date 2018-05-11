@@ -123,3 +123,8 @@ z
 ## Git sync:
 
 * sudo scp -P 10022 -r mininet@localhost:/home/mininet/* ~/Dropbox/Academics/MEng/Working/MininetCodingSwitch
+
+## Notes on editing basicfwd.c
+
+* Disabled pronuscuous mode, as all ports were collecting all of the packets. 
+* Ive only enabled receiving will I monitor how the program works and do various tests.

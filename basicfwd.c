@@ -112,6 +112,7 @@ port_init(uint16_t port, struct rte_mempool *mbuf_pool)
 			addr.addr_bytes[4], addr.addr_bytes[5]);
 
 	/* Enable RX in promiscuous mode for the Ethernet device. */
+	//Disabled by DD	
 	rte_eth_promiscuous_enable(port);
 
 	return 0;
@@ -147,12 +148,14 @@ lcore_main(void)
 			rte_lcore_id());
 
 	/* Run until the application is quit or killed. */
-	for (;;) {
+	for (;;) 
+	{
 		/*
 		 * Receive packets on a port and forward them on the paired
 		 * port. The mapping is 0 -> 1, 1 -> 0, 2 -> 3, 3 -> 2, etc.
 		 */
-		for (port = 0; port < nb_ports; port++) {
+		for (port = 0; port < nb_ports; port++) 
+		{
 
 			/* Get burst of RX packets, from first port of pair. */
 			//Loops, parsing the RX ring of the receive queue, up to nb_pkts.
@@ -160,16 +163,18 @@ lcore_main(void)
 			const uint16_t nb_rx = rte_eth_rx_burst(port, 0,
 					bufs, BURST_SIZE);
 
-			if (unlikely(nb_rx == 0)){
+			if (unlikely(nb_rx == 0))
+			{
 				continue;
 			}
 
 			//DD
 			//Get dst of recieved packet
-			//Dump raw packets into a file, exclude broadcast packets (Such as ARP)
+			//Exclude broadcast packets (Such as ARP)
 			const unsigned char *data = rte_pktmbuf_mtod(bufs[0], void *); //Convert data to char.
 			if(data[0]!=255)
 			{
+				//Dump packets into a file
 				FILE *mbuf_file;
 				mbuf_file = fopen("mbuf_dump.txt","a");
 				fprintf(mbuf_file, "\n ------------------ \n Port:%d ----",port);
@@ -178,19 +183,44 @@ lcore_main(void)
 				fprintf(mbuf_file, "DST MAC: %02X:%02X:%02X:%02X:%02X:%02X\n",data[0],data[1],data[2],data[3],data[4],data[5]);
 				fprintf(mbuf_file, "SRC MAC: %02X:%02X:%02X:%02X:%02X:%02X\n",data[6],data[7],data[8],data[9],data[10],data[11]);
 				fclose(mbuf_file);
+
+				//DD
+				//Create forwarding table and forward data according to received DST mac to a specifc port
+				// de ad be ef 00 06 -> port 0
+				// de ad be ef 00 07 -> port 1
+				// de ad be ef 00 08 -> port 2		
+				// de ad be ef 00 09 -> port 3
+
+				//Get the last octet of the dst mac address.
+				uint16_t out_port;
+				//Array to store forwarding info, value is last mac octet, and index is the port.
+				uint16_t dst_macs[] = {6,7,8,9};
+				//Send packet to approriate port
+				uint16_t i;
+				for(i=0;i<sizeof(dst_macs);i++)
+				{
+					if(dst_macs[i] == data[5]) //Get index of dst addr to be the port.
+					{
+						out_port = i;
+						printf("Out Port: %u\n", out_port);
+						
+						//Send recieved packet to correct dst port:
+						const uint16_t nb_tx = rte_eth_tx_burst(out_port, 0,bufs, nb_rx);
+
+						/* Free any unsent packets. */
+						if (unlikely(nb_tx < nb_rx)) {
+							uint16_t buf;
+							for (buf = nb_tx; buf < nb_rx; buf++)
+								rte_pktmbuf_free(bufs[buf]);
+						}
+						
+						printf("%u %u\n", port,i);
+						
+						//Break all loops
+						i = sizeof(dst_macs);
+					}
+				}
 			}
-
-			rte_pktmbuf_free(bufs[0]);
-
-			/* Send burst of TX packets, to second port of pair. */
-			//const uint16_t nb_tx = rte_eth_tx_burst(port ^ 1, 0,bufs, nb_rx);
-
-			/* Free any unsent packets. */
-			//if (unlikely(nb_tx < nb_rx)) {
-			//	uint16_t buf;
-			//	for (buf = nb_tx; buf < nb_rx; buf++)
-			//		rte_pktmbuf_free(bufs[buf]);
-			//}
 		}
 	}
 }
