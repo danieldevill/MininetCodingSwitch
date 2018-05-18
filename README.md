@@ -47,7 +47,7 @@ Notes on running iPerf in Multicast mode:
 * With custom topo:
 	* sudo mn --custom ~/mininet/custom/butterfly.py --topo butterflytopo --mac --switch ovsk --controller remote
 
-## Scapy packet generator:
+## Scapy packet generator:``
 z
 * To start: sudo .local/bin/scapy
 * Scapy is a packet generating python program.
@@ -127,4 +127,19 @@ z
 ## Notes on editing basicfwd.c
 
 * Disabled pronuscuous mode, as all ports were collecting all of the packets. 
-* Ive only enabled receiving will I monitor how the program works and do various tests.
+* Ive only enabled receiving till I monitor how the program works and do various tests.
+
+## To do: May 16th:
+
+* Force host traffic through one port, capture traffic through specific port on OVS switch side. 
+* Do performance tests to confirm ovs-dpdk working together, vs traditional vs ovs, vs dpdk.
+* Add networking coding to it.
+
+## Kodo-c
+
+* Ive been installing kodo-c library.
+* Im using /kodo-c/shared_kodoc as the shared library location for kodo-c.
+* Kodo-c basic example code is running in the basicfwd DPDK application.
+* This indicates that a link is established for the shared kodo-c library.
+* I had to modify the basicfwd Makefile to do so.
+* I can now begin integrating dpdk and kodo-c and doing performance tests, testing different configurations, etc.
