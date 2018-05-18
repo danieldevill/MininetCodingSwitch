@@ -36,4 +36,4 @@ terminator -g ovsvmcli_config
 sudo ./ifdown
 
 #Backup mininet working to Dropbox folder
-scp -P 10022 -r mininet@localhost:/usr/src/dpdk-stable-17.11.1/examples/skeleton1/* ~/Dropbox/Academics/MEng/Working/MininetCodingSwitch/skeleton1
+sudo scp -P 10022 -r mininet@localhost:/usr/src/dpdk-stable-17.11.1/examples/skeleton1/* ~/Dropbox/Academics/MEng/Working/MininetCodingSwitch/skeleton1

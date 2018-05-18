@@ -1,0 +1,377 @@
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f97fb52ed80, iova=17b52ee00, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f97fb52ed80, data=0x7f97fb52ee80, data_len=60
+  Dump data at [0x7f97fb52ee80], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f97fb52e440, iova=17b52e4c0, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f97fb52e440, data=0x7f97fb52e540, data_len=60
+  Dump data at [0x7f97fb52e540], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f97fb5184c0, iova=17b518540, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f97fb5184c0, data=0x7f97fb5185c0, data_len=60
+  Dump data at [0x7f97fb5185c0], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f97fb517b80, iova=17b517c00, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f97fb517b80, data=0x7f97fb517c80, data_len=60
+  Dump data at [0x7f97fb517c80], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f97fb517240, iova=17b5172c0, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f97fb517240, data=0x7f97fb517340, data_len=60
+  Dump data at [0x7f97fb517340], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f7efb535c80, iova=17b535d00, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f7efb535c80, data=0x7f7efb535d80, data_len=60
+  Dump data at [0x7f7efb535d80], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f7efb535340, iova=17b5353c0, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f7efb535340, data=0x7f7efb535440, data_len=60
+  Dump data at [0x7f7efb535440], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f25bb539d40, iova=17b539dc0, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f25bb539d40, data=0x7f25bb539e40, data_len=60
+  Dump data at [0x7f25bb539e40], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f25bb539400, iova=17b539480, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f25bb539400, data=0x7f25bb539500, data_len=60
+  Dump data at [0x7f25bb539500], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f25bb538ac0, iova=17b538b40, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f25bb538ac0, data=0x7f25bb538bc0, data_len=60
+  Dump data at [0x7f25bb538bc0], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f25bb507880, iova=17b507900, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f25bb507880, data=0x7f25bb507980, data_len=60
+  Dump data at [0x7f25bb507980], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f65bb520640, iova=17b5206c0, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f65bb520640, data=0x7f65bb520740, data_len=60
+  Dump data at [0x7f65bb520740], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f6efb537840, iova=17b5378c0, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f6efb537840, data=0x7f6efb537940, data_len=60
+  Dump data at [0x7f6efb537940], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7fae7b5365c0, iova=17b536640, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7fae7b5365c0, data=0x7fae7b5366c0, data_len=60
+  Dump data at [0x7fae7b5366c0], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7fae7b5f2d40, iova=17b5f2dc0, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7fae7b5f2d40, data=0x7fae7b5f2e40, data_len=60
+  Dump data at [0x7fae7b5f2e40], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7fd17b53c240, iova=17b53c2c0, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7fd17b53c240, data=0x7fd17b53c340, data_len=60
+  Dump data at [0x7fd17b53c340], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f797b535c80, iova=17b535d00, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f797b535c80, data=0x7f797b535d80, data_len=60
+  Dump data at [0x7f797b535d80], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7febfb5365c0, iova=17b536640, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7febfb5365c0, data=0x7febfb5366c0, data_len=60
+  Dump data at [0x7febfb5366c0], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f7b3b539400, iova=17b539480, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f7b3b539400, data=0x7f7b3b539500, data_len=60
+  Dump data at [0x7f7b3b539500], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f403b52ed80, iova=17b52ee00, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f403b52ed80, data=0x7f403b52ee80, data_len=60
+  Dump data at [0x7f403b52ee80], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f5dfb539d40, iova=17b539dc0, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f5dfb539d40, data=0x7f5dfb539e40, data_len=60
+  Dump data at [0x7f5dfb539e40], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7fddfb539400, iova=17b539480, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7fddfb539400, data=0x7fddfb539500, data_len=60
+  Dump data at [0x7fddfb539500], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7fcc7b5365c0, iova=17b536640, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7fcc7b5365c0, data=0x7fcc7b5366c0, data_len=60
+  Dump data at [0x7fcc7b5366c0], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f4b7b535c80, iova=17b535d00, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f4b7b535c80, data=0x7f4b7b535d80, data_len=60
+  Dump data at [0x7f4b7b535d80], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f183b538180, iova=17b538200, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f183b538180, data=0x7f183b538280, data_len=60
+  Dump data at [0x7f183b538280], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f1fbb53a680, iova=17b53a700, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f1fbb53a680, data=0x7f1fbb53a780, data_len=60
+  Dump data at [0x7f1fbb53a780], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7fdd7b535c80, iova=17b535d00, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7fdd7b535c80, data=0x7fdd7b535d80, data_len=60
+  Dump data at [0x7fdd7b535d80], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7fd8bb539d40, iova=17b539dc0, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7fd8bb539d40, data=0x7fd8bb539e40, data_len=60
+  Dump data at [0x7fd8bb539e40], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
+
+ ------------------ 
+ Port:2 ----dump mbuf at 0x7f4e7b53b900, iova=17b53b980, buf_len=2176
+  pkt_len=60, ol_flags=0, nb_segs=1, in_port=2
+  segment at 0x7f4e7b53b900, data=0x7f4e7b53ba00, data_len=60
+  Dump data at [0x7f4e7b53ba00], len=60
+00000000: DE AD BE EF 00 08 DE AD BE EF 00 06 90 00 48 65 | ..............He
+00000010: 6C 6C 6F 00 00 00 00 00 00 00 00 00 00 00 00 00 | llo.............
+00000020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 | ................
+00000030: 00 00 00 00 00 00 00 00 00 00 00 00 |  |  |  |  | ............
+------Decoded------
+DST MAC: DE:AD:BE:EF:00:08
+SRC MAC: DE:AD:BE:EF:00:06
