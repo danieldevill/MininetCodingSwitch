@@ -5,6 +5,8 @@
 #VM network config up.
 sudo ./ifup 
 
+echo "Interfaces up!"
+
 #Run mininet in QEMU vm with rocker
 #start qemu debian vm image
 sudo qemu-system-x86_64 /var/lib/libvirt/images/mininet.qcow2 \
@@ -13,13 +15,13 @@ sudo qemu-system-x86_64 /var/lib/libvirt/images/mininet.qcow2 \
 -cpu host,+ssse3,+sse4.1,+sse4.2,+x2apic \
 -smp 8 -numa node,nodeid=0  \
 -device e1000,vlan=0 -net user,name=net1,vlan=0,hostfwd=tcp::10022-:22 \
--device e1000,vlan=1,mac=de:ad:be:ef:00:06 \
+-device e1000,vlan=1,mac=de:ad:be:ef:00:02 \
 -net tap,name=net2,vlan=1,ifname=ovs_tap1,script=no,downscript=no \
--device e1000,vlan=1,mac=de:ad:be:ef:00:07 \
+-device e1000,vlan=1,mac=de:ad:be:ef:00:03 \
 -net tap,name=net3,vlan=1,ifname=ovs_tap2,script=no,downscript=no \
--device e1000,vlan=1,mac=de:ad:be:ef:00:08 \
+-device e1000,vlan=1,mac=de:ad:be:ef:00:04 \
 -net tap,name=net4,vlan=1,ifname=ovs_tap3,script=no,downscript=no \
--device e1000,vlan=1,mac=de:ad:be:ef:00:09 \
+-device e1000,vlan=1,mac=de:ad:be:ef:00:05 \
 -net tap,name=net5,vlan=1,ifname=ovs_tap4,script=no,downscript=no &
 
 sleep 5
@@ -36,4 +38,4 @@ terminator -g ovsvmcli_config
 sudo ./ifdown
 
 #Backup mininet working to Dropbox folder
-sudo scp -P 10022 -r mininet@localhost:/usr/src/dpdk-stable-17.11.1/examples/skeleton1/* ~/Dropbox/Academics/MEng/Working/MininetCodingSwitch/skeleton1
+sudo scp -P 10022 -r mininet@localhost:/usr/src/dpdk-stable-17.11.1/examples/l2fwd_daniel/* ~/Dropbox/Academics/MEng/Working/MininetCodingSwitch/l2fwd_daniel

@@ -112,7 +112,7 @@ z
 * Skeleton (basicfwd):
 	* sudo $RTE_SDK/examples/skeleton1/build/basicfwd -l 1 -n 4 -m 100 --file-prefix ske
 * l2fwd:
-	* sudo $RTE_SDK/examples/l2fwd/build/l2fwd -l 1,2 -n 4 --file-prefix l2  -- -p 0x3
+	* sudo $RTE_SDK/examples/l2fwd_daniel/build/l2fwd -l 1,2 -n 4 --file-prefix l2  -- -p 0x3
 
 ## PcapPlusPlus
 
@@ -143,3 +143,20 @@ z
 * This indicates that a link is established for the shared kodo-c library.
 * I had to modify the basicfwd Makefile to do so.
 * I can now begin integrating dpdk and kodo-c and doing performance tests, testing different configurations, etc.
+
+## l2fwd:
+
+* Now that I know Kodo can be integrated into DPDK, I want to imporve the work of the exisiting l2fwd application to include network coding. 
+* I want to use this as a base and make improvements (optimations if there are any) to better my case.
+* BSD 3 license, so improvements are welcome.
+* Prof. Engelbrecht says I should build on their implementation. 
+* sudo $RTE_SDK/examples/l2fwd_daniel/build/l2fwd -l 1,2,3,4 -n 4 --file-prefix l2  -- -p F
+* Ive removed a bunch of code from l2fwd_daniel that is relevent for stats or any error detection, as this is a single use case which I pre configure, so I do not need general use case error handling.
+* I am editing the way MAC addresses are updating.
+	* Follow the progress of dst_port
+	* MAC address updating disabled allows for normal L2 switch operation.
+* I am adding ARP function to deal with ARP requests sent by hosts.
+* Initial tests are with static arp entries using the "arp -s" command:
+	* sudo arp -s 192.168.1.254 de:ad:be:ef:00:02
+	* And this works! No more arp requests all over the place.
+	* I need to make it automatic in the sense that the switch responds to ARP requests. 

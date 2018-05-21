@@ -1,4 +1,4 @@
-dep_main.o = /usr/src/dpdk-stable-17.11.1/examples/l2fwd/main.c \
+dep_main.o = /usr/src/dpdk-stable-17.11.1/examples/l2fwd_daniel/main.c \
  /usr/include/stdc-predef.h \
  /usr/src/dpdk-stable-17.11.1/x86_64-native-linuxapp-gcc/include/rte_config.h \
  /usr/include/stdio.h \
