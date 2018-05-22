@@ -217,4 +217,5 @@ dep_main.o = /usr/src/dpdk-stable-17.11.1/examples/l2fwd_daniel/main.c \
  /usr/src/dpdk-stable-17.11.1/x86_64-native-linuxapp-gcc/include/rte_errno.h \
  /usr/src/dpdk-stable-17.11.1/x86_64-native-linuxapp-gcc/include/rte_ether.h \
  /usr/src/dpdk-stable-17.11.1/x86_64-native-linuxapp-gcc/include/rte_eth_ctrl.h \
- /usr/src/dpdk-stable-17.11.1/x86_64-native-linuxapp-gcc/include/rte_dev_info.h
+ /usr/src/dpdk-stable-17.11.1/x86_64-native-linuxapp-gcc/include/rte_dev_info.h \
+ /usr/src/dpdk-stable-17.11.1/examples/l2fwd_daniel/main.h

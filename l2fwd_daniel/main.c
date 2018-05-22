@@ -73,6 +73,12 @@
 #include <rte_mempool.h>
 #include <rte_mbuf.h>
 
+//Added by DD.
+#include "main.h"
+
+//ARP table
+static uint64_t arp_table[1000][3];
+
 static volatile bool force_quit;
 
 /* MAC updating enabled by default */
@@ -145,27 +151,133 @@ l2fwd_simple_forward(struct rte_mbuf *m, unsigned portid)
 	dst_port = l2fwd_dst_ports[portid];
 
 	//DD
-	//Get dst of recieved packet
-	//Exclude broadcast packets (Such as ARP)
+	//Get recieved packet
 	const unsigned char* data = rte_pktmbuf_mtod(m, void *); //Convert data to char.
-/*	if(data[0]!=0)
-	{
-		//Dump packets into a file
-		FILE *mbuf_file;
-		mbuf_file = fopen("mbuf_dump.txt","a");
-		fprintf(mbuf_file, "\n ------------------ \n Port:%d ----",portid);
-		rte_pktmbuf_dump(mbuf_file,m,1000);
-		fprintf(mbuf_file,"------Decoded------\n"); //Decode raw frame.
-		fprintf(mbuf_file, "DST MAC: %02X:%02X:%02X:%02X:%02X:%02X\n",data[0],data[1],data[2],data[3],data[4],data[5]);
-		fprintf(mbuf_file, "SRC MAC: %02X:%02X:%02X:%02X:%02X:%02X\n",data[6],data[7],data[8],data[9],data[10],data[11]);
-		fclose(mbuf_file);
 
-		printf("DST: %u SRC: %u\n",dst_port,portid);
-	}*/
+	//Get Ethertype
+	uint16_t ether_type = (data[12] << 8) | data[13];
+
+	//Check if packet is of type ARP
+	if(ether_type == 0x0806)
+	{
+		l2fwd_arp_reply(m,portid);
+		return;
+	}
  
 	buffer = tx_buffer[dst_port];
 	rte_eth_tx_buffer(dst_port, 0, buffer, m);
 
+}
+
+//DD.
+//Method to reply to ARP requests. 
+void
+l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
+{
+	//struct rte_eth_dev_tx_buffer *buffer;
+
+	//Construct ARP reply
+	//Get ARP data from rx mbuf.
+	unsigned char* arp_data = rte_pktmbuf_mtod(m, void *) + 14;
+	//Hardware Type
+	uint16_t hw_type = (arp_data[0] << 8) | arp_data[1];
+	//Protocol Type
+	uint16_t ptcl_type = (arp_data[2] << 8) | arp_data[3];
+	//Hardware Address Length
+	uint8_t hw_addr_len = arp_data[4];
+	//Protocol Address Length
+	uint8_t ptcl_addr_len = arp_data[5];
+	//Operation Code
+	uint16_t op_code = (arp_data[6] << 8) | arp_data[7];
+	//Source Hardware Address
+	uint64_t src_hw_addr = ((uint64_t)arp_data[8] << 40) | ((uint64_t)arp_data[9] << 32) | ((uint64_t)arp_data[10] << 24) | ((uint64_t)arp_data[11] << 16) | ((uint64_t)arp_data[12] << 8) | (uint64_t)arp_data[13];
+	//Source Protocol Address
+	uint32_t src_ptcl_addr = (arp_data[14] << 24) | (arp_data[15] << 16) | (arp_data[16] << 8) | arp_data[17];
+	//Target Hardware Address
+	uint64_t trg_hw_addr = ((uint64_t)arp_data[18] << 40) | ((uint64_t)arp_data[19] << 32) | ((uint64_t)arp_data[20] << 24) | ((uint64_t)arp_data[21] << 16) | ((uint64_t)arp_data[22] << 8) | (uint64_t)arp_data[23];
+	//Target Protocol Address
+	uint32_t trg_ptcl_addr = (arp_data[24] << 24) | (arp_data[25] << 16) | (arp_data[26] << 8) | arp_data[27];
+
+	//Begin ARP reception algorithm, based on: http://www.danzig.jct.ac.il/tcp-ip-lab/ibm-tutorial/3376c28.html
+	//Correct hw type: Ethernet
+	if(hw_type != 0x0001)
+	{
+		return;
+	}
+	//Correct protocol: IP
+	if(ptcl_type != 0x0800)
+	{
+		return;
+	}
+	//ARP table entry flag
+	bool arp_tbl_ent = false;
+	//Check if <protocol type, sender protocol address> is in table
+	int i;
+	for(i=0;i<1000;i++)
+	{
+		if(arp_table[i][0] == ptcl_type && arp_table[i][1] == src_ptcl_addr)
+		{
+			//Update table with sender hardware address
+			arp_table[i][2] = src_hw_addr;
+			//Set table entry flag to true.
+			arp_tbl_ent = true;
+		}
+	}
+	//Check if port is the target protocol address.
+	if(port_ip_lookup(trg_ptcl_addr,portid) != 0)
+	{
+		return;
+	}
+	//Check if flag is still false
+	if(!arp_tbl_ent)
+	{	
+		//Add ARP table triplet to table.
+		arp_table[sizeof(arp_table)+1][0] = ptcl_type;
+		arp_table[sizeof(arp_table)+1][1] = src_ptcl_addr;
+		arp_table[sizeof(arp_table)+1][2] = src_hw_addr;
+	}
+	for(i=0;i<1000;i++)
+	{
+		printf("%lu %lu %lu \n",arp_table[i][0],arp_table[i][1],arp_table[i][2]);
+	}
+	//Check if request, if so respond...
+	//Continue here. And fix and test above!
+
+	//dst_port is equal to 3rd_octet of ARP (-1):"Hardware Address of Target", Which is data[40.]
+	//unsigned dst_port = data[40] - 1;
+
+	//Get ARP values. 
+
+
+	//Duplicate rx_mbuf local variable.
+	//struct rte_mbuf tx_mbuf = *m;
+
+	//Modify tx_mbuf
+	//unsigned char* txdata = rte_pktmbuf_mtod(tx_mbuf, void *);
+	//txdata[40] = '7';
+
+	//Get tx buffer of dst_port
+	//buffer = tx_buffer[dst_port];
+
+	//Add data to tx buffer, to be sent out when full.
+	//rte_eth_tx_buffer(dst_port, 0, buffer, m);
+
+	//Send ARP reply
+}
+
+//Check if IP address belongs to port.
+int 
+port_ip_lookup(uint32_t trg_ptcl_addr, unsigned portid)
+{
+
+	if(portid+1 == ((trg_ptcl_addr << 16) >> 24) )
+	{
+		return 0;
+	}
+	else
+	{
+		return 1;
+	}
 }
 
 /* main processing loop */
