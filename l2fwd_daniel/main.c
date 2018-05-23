@@ -77,7 +77,9 @@
 #include "main.h"
 
 //ARP table
-static uint64_t arp_table[1000][3];
+#define ARP_ENTRIES 100
+static uint64_t arp_table[ARP_ENTRIES][3];
+static unsigned arp_counter = 0;
 
 static volatile bool force_quit;
 
@@ -87,7 +89,7 @@ static int mac_updating = 0;
 
 #define RTE_LOGTYPE_L2FWD RTE_LOGTYPE_USER1
 
-#define NB_MBUF   8192
+#define NB_MBUF 8192
 
 #define MAX_PKT_BURST 32
 #define BURST_TX_DRAIN_US 100 /* TX drain every ~100us */
@@ -176,7 +178,14 @@ l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
 {
 	//struct rte_eth_dev_tx_buffer *buffer;
 
+	//Check ARP counter. If so reset.
+	if(arp_counter == ARP_ENTRIES)
+	{
+		arp_counter = 0;
+	}
+
 	//Construct ARP reply
+	//Could use ARP header to do so.
 	//Get ARP data from rx mbuf.
 	unsigned char* arp_data = rte_pktmbuf_mtod(m, void *) + 14;
 	//Hardware Type
@@ -191,10 +200,12 @@ l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
 	uint16_t op_code = (arp_data[6] << 8) | arp_data[7];
 	//Source Hardware Address
 	uint64_t src_hw_addr = ((uint64_t)arp_data[8] << 40) | ((uint64_t)arp_data[9] << 32) | ((uint64_t)arp_data[10] << 24) | ((uint64_t)arp_data[11] << 16) | ((uint64_t)arp_data[12] << 8) | (uint64_t)arp_data[13];
+	//struct ether_addr src_hw_addr = {arp_data[8],arp_data[9],arp_data[10],arp_data[11],arp_data[12],arp_data[13]};	
 	//Source Protocol Address
 	uint32_t src_ptcl_addr = (arp_data[14] << 24) | (arp_data[15] << 16) | (arp_data[16] << 8) | arp_data[17];
 	//Target Hardware Address
 	uint64_t trg_hw_addr = ((uint64_t)arp_data[18] << 40) | ((uint64_t)arp_data[19] << 32) | ((uint64_t)arp_data[20] << 24) | ((uint64_t)arp_data[21] << 16) | ((uint64_t)arp_data[22] << 8) | (uint64_t)arp_data[23];
+	//struct ether_addr trg_hw_addr = {arp_data[18],arp_data[19],arp_data[20],arp_data[21],arp_data[22],arp_data[23]};	
 	//Target Protocol Address
 	uint32_t trg_ptcl_addr = (arp_data[24] << 24) | (arp_data[25] << 16) | (arp_data[26] << 8) | arp_data[27];
 
@@ -213,7 +224,7 @@ l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
 	bool arp_tbl_ent = false;
 	//Check if <protocol type, sender protocol address> is in table
 	int i;
-	for(i=0;i<1000;i++)
+	for(i=0;i<ARP_ENTRIES;i++)
 	{
 		if(arp_table[i][0] == ptcl_type && arp_table[i][1] == src_ptcl_addr)
 		{
@@ -232,16 +243,68 @@ l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
 	if(!arp_tbl_ent)
 	{	
 		//Add ARP table triplet to table.
-		arp_table[sizeof(arp_table)+1][0] = ptcl_type;
-		arp_table[sizeof(arp_table)+1][1] = src_ptcl_addr;
-		arp_table[sizeof(arp_table)+1][2] = src_hw_addr;
+		arp_table[arp_counter][0] = ptcl_type;
+		arp_table[arp_counter][1] = src_ptcl_addr;
+		arp_table[arp_counter][2] = src_hw_addr;
+		//Increment arp_counter
+		arp_counter++;
 	}
-	for(i=0;i<1000;i++)
+	for(i=0;i<ARP_ENTRIES;i++)
 	{
-		printf("%lu %lu %lu \n",arp_table[i][0],arp_table[i][1],arp_table[i][2]);
+		printf("%lx %lx %lx \n",arp_table[i][0],arp_table[i][1],arp_table[i][2]);
 	}
-	//Check if request, if so respond...
-	//Continue here. And fix and test above!
+	//Check if request
+	if(op_code != 1)
+	{
+		return;
+	}
+	//Reply to requesting host.
+	//Swap source and target addresses.
+	uint64_t tmp_hw_addr = src_hw_addr;
+	src_hw_addr = trg_hw_addr;
+	trg_hw_addr = tmp_hw_addr;
+	uint32_t tmp_ptcl_addr = src_ptcl_addr;
+	src_ptcl_addr = trg_ptcl_addr;
+	trg_ptcl_addr = src_ptcl_addr;
+	//Send back ARP packet as ARP Reply
+
+	//Dump packets into a file
+	FILE *mbuf_file;
+	mbuf_file = fopen("mbuf_dump.txt","a");
+	fprintf(mbuf_file, "\n ------------------ \n Port:%d ----",portid);
+	rte_pktmbuf_dump(mbuf_file,m,1000);
+	fclose(mbuf_file);
+
+	//Create mbuf packet struct and ether header.
+	struct rte_mbuf* arp_mbuf;
+	struct ether_addr s_addr;
+	struct ether_addr d_addr = {arp_data[8],arp_data[9],arp_data[10],arp_data[11],arp_data[12],arp_data[13]};
+	rte_eth_macaddr_get(portid,&s_addr); 
+	struct ether_hdr eth_hdr = {	
+		d_addr, //Same as incoming source addr.
+		s_addr, //Port mac address
+		0x0608 //0806 (ARP) ether type
+	};	
+	//Allocate mbuf to pool.
+	arp_mbuf = rte_pktmbuf_alloc(l2fwd_pktmbuf_pool);
+	char* pkt_data = rte_pktmbuf_append(arp_mbuf,42);
+	rte_memcpy(pkt_data,&eth_hdr,14); //Append header to packet.
+	//Append ARP data to packet
+	//char arp_rply[] =  {0x0001,0x0800,0x0604,0x0001};
+	strcpy(pkt_data+14, arp_data);
+	strcpy(pkt_data+21, &s_addr); //src_mac
+	//src_ip
+	strcpy(pkt_data+35, &d_addr); //trg_mac
+
+	//Create ARP reply packet
+	//mbuf->buf_addr points to first packet byte.
+
+	//Dump packets into a file
+	mbuf_file = fopen("mbuf_dump.txt","a");
+	fprintf(mbuf_file, "\n ------------------ \n Port:%d ----",portid);
+	rte_pktmbuf_dump(mbuf_file,arp_mbuf,1000);
+	fclose(mbuf_file);
+
 
 	//dst_port is equal to 3rd_octet of ARP (-1):"Hardware Address of Target", Which is data[40.]
 	//unsigned dst_port = data[40] - 1;
@@ -252,24 +315,18 @@ l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
 	//Duplicate rx_mbuf local variable.
 	//struct rte_mbuf tx_mbuf = *m;
 
-	//Modify tx_mbuf
-	//unsigned char* txdata = rte_pktmbuf_mtod(tx_mbuf, void *);
-	//txdata[40] = '7';
-
 	//Get tx buffer of dst_port
 	//buffer = tx_buffer[dst_port];
 
 	//Add data to tx buffer, to be sent out when full.
 	//rte_eth_tx_buffer(dst_port, 0, buffer, m);
-
-	//Send ARP reply
 }
 
+//DD
 //Check if IP address belongs to port.
 int 
 port_ip_lookup(uint32_t trg_ptcl_addr, unsigned portid)
 {
-
 	if(portid+1 == ((trg_ptcl_addr << 16) >> 24) )
 	{
 		return 0;
