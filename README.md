@@ -159,4 +159,4 @@ z
 * Initial tests are with static arp entries using the "arp -s" command:
 	* sudo arp -s 192.168.1.254 de:ad:be:ef:00:02
 	* And this works! No more arp requests all over the place.
-	* I need to make it automatic in the sense that the switch responds to ARP requests. 
+	* I need to make it automatic in the sense that the switch responds to ARP requests. 	

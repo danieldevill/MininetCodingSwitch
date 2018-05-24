@@ -81,6 +81,9 @@
 static uint64_t arp_table[ARP_ENTRIES][3];
 static unsigned arp_counter = 0;
 
+//Other defines by DD
+#define HW_TYPE_ETHERNET 0x0001
+
 static volatile bool force_quit;
 
 /* MAC updating enabled by default */
@@ -160,7 +163,7 @@ l2fwd_simple_forward(struct rte_mbuf *m, unsigned portid)
 	uint16_t ether_type = (data[12] << 8) | data[13];
 
 	//Check if packet is of type ARP
-	if(ether_type == 0x0806)
+	if(ether_type == ETHER_TYPE_ARP)
 	{
 		l2fwd_arp_reply(m,portid);
 		return;
@@ -176,7 +179,26 @@ l2fwd_simple_forward(struct rte_mbuf *m, unsigned portid)
 void
 l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
 {
-	//struct rte_eth_dev_tx_buffer *buffer;
+	//Construct ARP reply
+	unsigned char* arp_data = (unsigned char*)rte_pktmbuf_mtod(m, void *) + 14;
+	//Target Protocol Address
+	uint32_t trg_ptcl_addr = (arp_data[24] << 24) | (arp_data[25] << 16) | (arp_data[26] << 8) | arp_data[27];
+	//Check if port is the target protocol address.
+	printf("PRT LOOKUP: %d\n", port_ip_lookup(trg_ptcl_addr,portid));
+	if(port_ip_lookup(trg_ptcl_addr,portid) != 0)
+	{
+		return;
+	}
+	//Hardware Type
+	uint16_t hw_type = (arp_data[0] << 8) | arp_data[1];
+	//Protocol Type
+	uint16_t ptcl_type = (arp_data[2] << 8) | arp_data[3];
+	//Operation Code
+	uint16_t op_code = (arp_data[6] << 8) | arp_data[7];
+	//Source Hardware Address
+	uint64_t src_hw_addr = ((uint64_t)arp_data[8] << 40) | ((uint64_t)arp_data[9] << 32) | ((uint64_t)arp_data[10] << 24) | ((uint64_t)arp_data[11] << 16) | ((uint64_t)arp_data[12] << 8) | (uint64_t)arp_data[13];
+	//Source Protocol Address
+	uint32_t src_ptcl_addr = (arp_data[14] << 24) | (arp_data[15] << 16) | (arp_data[16] << 8) | arp_data[17];
 
 	//Check ARP counter. If so reset.
 	if(arp_counter == ARP_ENTRIES)
@@ -184,44 +206,21 @@ l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
 		arp_counter = 0;
 	}
 
-	//Construct ARP reply
-	//Could use ARP header to do so.
-	//Get ARP data from rx mbuf.
-	unsigned char* arp_data = rte_pktmbuf_mtod(m, void *) + 14;
-	//Hardware Type
-	uint16_t hw_type = (arp_data[0] << 8) | arp_data[1];
-	//Protocol Type
-	uint16_t ptcl_type = (arp_data[2] << 8) | arp_data[3];
-	//Hardware Address Length
-	uint8_t hw_addr_len = arp_data[4];
-	//Protocol Address Length
-	uint8_t ptcl_addr_len = arp_data[5];
-	//Operation Code
-	uint16_t op_code = (arp_data[6] << 8) | arp_data[7];
-	//Source Hardware Address
-	uint64_t src_hw_addr = ((uint64_t)arp_data[8] << 40) | ((uint64_t)arp_data[9] << 32) | ((uint64_t)arp_data[10] << 24) | ((uint64_t)arp_data[11] << 16) | ((uint64_t)arp_data[12] << 8) | (uint64_t)arp_data[13];
-	//struct ether_addr src_hw_addr = {arp_data[8],arp_data[9],arp_data[10],arp_data[11],arp_data[12],arp_data[13]};	
-	//Source Protocol Address
-	uint32_t src_ptcl_addr = (arp_data[14] << 24) | (arp_data[15] << 16) | (arp_data[16] << 8) | arp_data[17];
-	//Target Hardware Address
-	uint64_t trg_hw_addr = ((uint64_t)arp_data[18] << 40) | ((uint64_t)arp_data[19] << 32) | ((uint64_t)arp_data[20] << 24) | ((uint64_t)arp_data[21] << 16) | ((uint64_t)arp_data[22] << 8) | (uint64_t)arp_data[23];
-	//struct ether_addr trg_hw_addr = {arp_data[18],arp_data[19],arp_data[20],arp_data[21],arp_data[22],arp_data[23]};	
-	//Target Protocol Address
-	uint32_t trg_ptcl_addr = (arp_data[24] << 24) | (arp_data[25] << 16) | (arp_data[26] << 8) | arp_data[27];
-
 	//Begin ARP reception algorithm, based on: http://www.danzig.jct.ac.il/tcp-ip-lab/ibm-tutorial/3376c28.html
 	//Correct hw type: Ethernet
-	if(hw_type != 0x0001)
+	printf("DBUG 1\n");
+	if(hw_type != HW_TYPE_ETHERNET)
 	{
 		return;
 	}
 	//Correct protocol: IP
-	if(ptcl_type != 0x0800)
+	if(ptcl_type != ETHER_TYPE_IPv4)
 	{
 		return;
 	}
+	printf("DBUG 2\n");
 	//ARP table entry flag
-	bool arp_tbl_ent = false;
+	int arp_tbl_ent = 0; //False
 	//Check if <protocol type, sender protocol address> is in table
 	int i;
 	for(i=0;i<ARP_ENTRIES;i++)
@@ -231,16 +230,12 @@ l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
 			//Update table with sender hardware address
 			arp_table[i][2] = src_hw_addr;
 			//Set table entry flag to true.
-			arp_tbl_ent = true;
+			arp_tbl_ent = 1;
 		}
 	}
-	//Check if port is the target protocol address.
-	if(port_ip_lookup(trg_ptcl_addr,portid) != 0)
-	{
-		return;
-	}
 	//Check if flag is still false
-	if(!arp_tbl_ent)
+	printf("DBUG 3 %d\n",!arp_tbl_ent);
+	if(arp_tbl_ent == 0)
 	{	
 		//Add ARP table triplet to table.
 		arp_table[arp_counter][0] = ptcl_type;
@@ -251,21 +246,18 @@ l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
 	}
 	for(i=0;i<ARP_ENTRIES;i++)
 	{
-		printf("%lx %lx %lx \n",arp_table[i][0],arp_table[i][1],arp_table[i][2]);
+		if(arp_table[i][0] != 0)
+		{
+			printf("%lx %lx %lx \n",arp_table[i][0],arp_table[i][1],arp_table[i][2]);
+		}
 	}
 	//Check if request
 	if(op_code != 1)
 	{
 		return;
 	}
+	printf("DBUG 4\n");
 	//Reply to requesting host.
-	//Swap source and target addresses.
-	uint64_t tmp_hw_addr = src_hw_addr;
-	src_hw_addr = trg_hw_addr;
-	trg_hw_addr = tmp_hw_addr;
-	uint32_t tmp_ptcl_addr = src_ptcl_addr;
-	src_ptcl_addr = trg_ptcl_addr;
-	trg_ptcl_addr = src_ptcl_addr;
 	//Send back ARP packet as ARP Reply
 
 	//Dump packets into a file
@@ -276,28 +268,31 @@ l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
 	fclose(mbuf_file);
 
 	//Create mbuf packet struct and ether header.
+	uint8_t src_ptcl_addr_ar[] = {192,168,portid+1,254};
+	uint8_t trg_ptcl_addr_ar[] = {192,168,portid+1,2};
+	uint8_t arp_header[] = {0x00,0x01,0x08,0x00,0x06,0x04,0x00,0x02};
 	struct rte_mbuf* arp_mbuf;
 	struct ether_addr s_addr;
-	struct ether_addr d_addr = {arp_data[8],arp_data[9],arp_data[10],arp_data[11],arp_data[12],arp_data[13]};
+	struct ether_addr d_addr = { //Same as ARP request src_hw_addr.
+		{arp_data[8],arp_data[9],arp_data[10],arp_data[11],arp_data[12],arp_data[13]}
+	};
 	rte_eth_macaddr_get(portid,&s_addr); 
 	struct ether_hdr eth_hdr = {	
 		d_addr, //Same as incoming source addr.
 		s_addr, //Port mac address
-		0x0608 //0806 (ARP) ether type
+		0x0608 //ARP Ether type
 	};	
+	printf("DBUG 5\n");
 	//Allocate mbuf to pool.
 	arp_mbuf = rte_pktmbuf_alloc(l2fwd_pktmbuf_pool);
 	char* pkt_data = rte_pktmbuf_append(arp_mbuf,42);
-	rte_memcpy(pkt_data,&eth_hdr,14); //Append header to packet.
+	rte_memcpy(pkt_data,&eth_hdr,ETHER_HDR_LEN); //Append header to packet.
 	//Append ARP data to packet
-	//char arp_rply[] =  {0x0001,0x0800,0x0604,0x0001};
-	strcpy(pkt_data+14, arp_data);
-	strcpy(pkt_data+21, &s_addr); //src_mac
-	//src_ip
-	strcpy(pkt_data+35, &d_addr); //trg_mac
-
-	//Create ARP reply packet
-	//mbuf->buf_addr points to first packet byte.
+	rte_memcpy(pkt_data+ETHER_HDR_LEN,&arp_header,sizeof(arp_header)); //Append arp_header to packet.
+	rte_memcpy(pkt_data+ETHER_HDR_LEN+sizeof(arp_header),&s_addr,sizeof(s_addr)); //Append src_hw_addr to packet.
+	rte_memcpy(pkt_data+ETHER_HDR_LEN+sizeof(arp_header)+sizeof(s_addr),&src_ptcl_addr_ar,sizeof(src_ptcl_addr_ar)); //Append src_pctl_addr to packet.
+	rte_memcpy(pkt_data+ETHER_HDR_LEN+sizeof(arp_header)+sizeof(s_addr)+sizeof(src_ptcl_addr_ar),&d_addr,sizeof(d_addr)); //Append trg_hw_addr to packet.
+	rte_memcpy(pkt_data+ETHER_HDR_LEN+sizeof(arp_header)+sizeof(s_addr)+sizeof(src_ptcl_addr_ar)+sizeof(d_addr),&trg_ptcl_addr_ar,sizeof(trg_ptcl_addr_ar)); //Append trg_pctl_addr to packet.
 
 	//Dump packets into a file
 	mbuf_file = fopen("mbuf_dump.txt","a");
@@ -305,21 +300,14 @@ l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
 	rte_pktmbuf_dump(mbuf_file,arp_mbuf,1000);
 	fclose(mbuf_file);
 
-
-	//dst_port is equal to 3rd_octet of ARP (-1):"Hardware Address of Target", Which is data[40.]
-	//unsigned dst_port = data[40] - 1;
-
-	//Get ARP values. 
-
-
-	//Duplicate rx_mbuf local variable.
-	//struct rte_mbuf tx_mbuf = *m;
-
 	//Get tx buffer of dst_port
-	//buffer = tx_buffer[dst_port];
+	struct rte_eth_dev_tx_buffer *buffer;
+	buffer = tx_buffer[portid];
 
 	//Add data to tx buffer, to be sent out when full.
-	//rte_eth_tx_buffer(dst_port, 0, buffer, m);
+	rte_pktmbuf_free(arp_mbuf);
+	uint16_t nb_tx = rte_eth_tx_buffer(portid, 0, buffer, arp_mbuf);
+	printf("%d Packets sent\n",nb_tx);
 }
 
 //DD

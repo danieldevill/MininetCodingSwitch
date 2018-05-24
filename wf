@@ -31,7 +31,7 @@ sudo terminator -g vmcli_config &
 
 sleep 2
 
-#Start ssh terminals for the ovs vm.
+#Start ssh terminals for the ovs vm.`
 terminator -g ovsvmcli_config
 
 #Network config down
