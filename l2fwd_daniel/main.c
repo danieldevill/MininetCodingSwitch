@@ -80,6 +80,7 @@
 #define ARP_ENTRIES 100
 static uint64_t arp_table[ARP_ENTRIES][3];
 static unsigned arp_counter = 0;
+//ERROR with arp_table?
 
 //Other defines by DD
 #define HW_TYPE_ETHERNET 0x0001
@@ -158,20 +159,16 @@ l2fwd_simple_forward(struct rte_mbuf *m, unsigned portid)
 	//DD
 	//Get recieved packet
 	const unsigned char* data = rte_pktmbuf_mtod(m, void *); //Convert data to char.
-
 	//Get Ethertype
 	uint16_t ether_type = (data[12] << 8) | data[13];
-
 	//Check if packet is of type ARP
 	if(ether_type == ETHER_TYPE_ARP)
 	{
 		l2fwd_arp_reply(m,portid);
 		return;
 	}
- 
 	buffer = tx_buffer[dst_port];
 	rte_eth_tx_buffer(dst_port, 0, buffer, m);
-
 }
 
 //DD.
@@ -179,13 +176,14 @@ l2fwd_simple_forward(struct rte_mbuf *m, unsigned portid)
 void
 l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
 {
+	printf("DBUG 0\n");
 	//Construct ARP reply
 	unsigned char* arp_data = (unsigned char*)rte_pktmbuf_mtod(m, void *) + 14;
 	//Target Protocol Address
 	uint32_t trg_ptcl_addr = (arp_data[24] << 24) | (arp_data[25] << 16) | (arp_data[26] << 8) | arp_data[27];
 	//Check if port is the target protocol address.
-	printf("PRT LOOKUP: %d\n", port_ip_lookup(trg_ptcl_addr,portid));
-	if(port_ip_lookup(trg_ptcl_addr,portid) != 0)
+	printf("PRT LOOKUP: %d\n", port_ip_lookup(&trg_ptcl_addr,portid));
+	if(port_ip_lookup(&trg_ptcl_addr,portid) != 0)
 	{
 		return;
 	}
@@ -259,14 +257,6 @@ l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
 	printf("DBUG 4\n");
 	//Reply to requesting host.
 	//Send back ARP packet as ARP Reply
-
-	//Dump packets into a file
-	FILE *mbuf_file;
-	mbuf_file = fopen("mbuf_dump.txt","a");
-	fprintf(mbuf_file, "\n ------------------ \n Port:%d ----",portid);
-	rte_pktmbuf_dump(mbuf_file,m,1000);
-	fclose(mbuf_file);
-
 	//Create mbuf packet struct and ether header.
 	uint8_t src_ptcl_addr_ar[] = {192,168,portid+1,254};
 	uint8_t trg_ptcl_addr_ar[] = {192,168,portid+1,2};
@@ -285,16 +275,23 @@ l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
 	printf("DBUG 5\n");
 	//Allocate mbuf to pool.
 	arp_mbuf = rte_pktmbuf_alloc(l2fwd_pktmbuf_pool);
-	char* pkt_data = rte_pktmbuf_append(arp_mbuf,42);
-	rte_memcpy(pkt_data,&eth_hdr,ETHER_HDR_LEN); //Append header to packet.
+	char* pkt_data = rte_pktmbuf_append(arp_mbuf,43); //Returns pointer to where new appended packet data starts.
+	pkt_data = rte_memcpy(pkt_data,&eth_hdr,ETHER_HDR_LEN); //Append header to packet.
 	//Append ARP data to packet
-	rte_memcpy(pkt_data+ETHER_HDR_LEN,&arp_header,sizeof(arp_header)); //Append arp_header to packet.
-	rte_memcpy(pkt_data+ETHER_HDR_LEN+sizeof(arp_header),&s_addr,sizeof(s_addr)); //Append src_hw_addr to packet.
-	rte_memcpy(pkt_data+ETHER_HDR_LEN+sizeof(arp_header)+sizeof(s_addr),&src_ptcl_addr_ar,sizeof(src_ptcl_addr_ar)); //Append src_pctl_addr to packet.
-	rte_memcpy(pkt_data+ETHER_HDR_LEN+sizeof(arp_header)+sizeof(s_addr)+sizeof(src_ptcl_addr_ar),&d_addr,sizeof(d_addr)); //Append trg_hw_addr to packet.
-	rte_memcpy(pkt_data+ETHER_HDR_LEN+sizeof(arp_header)+sizeof(s_addr)+sizeof(src_ptcl_addr_ar)+sizeof(d_addr),&trg_ptcl_addr_ar,sizeof(trg_ptcl_addr_ar)); //Append trg_pctl_addr to packet.
+	printf("DBUG 6\n");
+	pkt_data = rte_memcpy(pkt_data+ETHER_HDR_LEN,&arp_header,sizeof(arp_header)); //Append arp_header to packet.
+	printf("DBUG 7\n");
+	pkt_data = rte_memcpy(pkt_data+sizeof(arp_header),&s_addr,sizeof(eth_hdr.s_addr.addr_bytes)); //Append src_hw_addr to packet.
+	printf("DBUG 8\n");
+	pkt_data = rte_memcpy(pkt_data+sizeof(eth_hdr.s_addr.addr_bytes),&src_ptcl_addr_ar,sizeof(src_ptcl_addr_ar)); //Append src_pctl_addr to packet.
+	printf("DBUG 9\n");
+	pkt_data = rte_memcpy(pkt_data+sizeof(src_ptcl_addr_ar),&d_addr,sizeof(eth_hdr.d_addr.addr_bytes)); //Append trg_hw_addr to packet.
+	printf("DBUG 10\n");
+	rte_memcpy(pkt_data+sizeof(eth_hdr.d_addr.addr_bytes),&trg_ptcl_addr_ar,sizeof(trg_ptcl_addr_ar)); //Append trg_pctl_addr to packet.
+	printf("DBUG 11\n");
 
 	//Dump packets into a file
+	FILE *mbuf_file;
 	mbuf_file = fopen("mbuf_dump.txt","a");
 	fprintf(mbuf_file, "\n ------------------ \n Port:%d ----",portid);
 	rte_pktmbuf_dump(mbuf_file,arp_mbuf,1000);
@@ -305,17 +302,17 @@ l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
 	buffer = tx_buffer[portid];
 
 	//Add data to tx buffer, to be sent out when full.
-	rte_pktmbuf_free(arp_mbuf);
 	uint16_t nb_tx = rte_eth_tx_buffer(portid, 0, buffer, arp_mbuf);
+	rte_pktmbuf_free(arp_mbuf);
 	printf("%d Packets sent\n",nb_tx);
 }
 
 //DD
 //Check if IP address belongs to port.
 int 
-port_ip_lookup(uint32_t trg_ptcl_addr, unsigned portid)
+port_ip_lookup(uint32_t *trg_ptcl_addr, unsigned portid)
 {
-	if(portid+1 == ((trg_ptcl_addr << 16) >> 24) )
+	if(portid+1 == ((*trg_ptcl_addr << 16) >> 24) )
 	{
 		return 0;
 	}
@@ -369,12 +366,9 @@ l2fwd_main_loop(void)
 		 */
 		diff_tsc = cur_tsc - prev_tsc;
 		if (unlikely(diff_tsc > drain_tsc)) {
-
 			for (i = 0; i < qconf->n_rx_port; i++) {
-
 				portid = l2fwd_dst_ports[qconf->rx_port_list[i]];
 				buffer = tx_buffer[portid];
-
 				rte_eth_tx_buffer_flush(portid, 0, buffer);
 			}
 

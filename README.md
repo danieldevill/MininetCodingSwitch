@@ -38,7 +38,7 @@ Notes on running iPerf in Multicast mode:
 
 ## To start POX controller with coding switch
 
-* pox/pox.py log.level --DEBUG misc.coding_switch
+* pox/pox.py log.level --DEBUG misc.coding_switch`
 
 ## To start mininet
 
@@ -46,8 +46,8 @@ Notes on running iPerf in Multicast mode:
 	* sudo mn --topo single,3 --mac --switch ovsk --controller remote
 * With custom topo:
 	* sudo mn --custom ~/mininet/custom/butterfly.py --topo butterflytopo --mac --switch ovsk --controller remote
-
-## Scapy packet generator:``
+``
+## Scapy packet generator:
 z
 * To start: sudo .local/bin/scapy
 * Scapy is a packet generating python program.
@@ -159,4 +159,6 @@ z
 * Initial tests are with static arp entries using the "arp -s" command:
 	* sudo arp -s 192.168.1.254 de:ad:be:ef:00:02
 	* And this works! No more arp requests all over the place.
-	* I need to make it automatic in the sense that the switch responds to ARP requests. 	
+	* I need to make it automatic in the sense that the switch responds to ARP requests. 
+* ARP table is working as required but there is some sort of "Segmentation fault"
+	* Possible cause is with the ARP_TABLE being updated. I should use a pointer?	
