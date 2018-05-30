@@ -17,12 +17,12 @@ sudo qemu-system-x86_64 /var/lib/libvirt/images/mininet.qcow2 \
 -device e1000,vlan=0 -net user,name=net1,vlan=0,hostfwd=tcp::10022-:22 \
 -device e1000,vlan=1,mac=de:ad:be:ef:00:02 \
 -net tap,name=net2,vlan=1,ifname=ovs_tap1,script=no,downscript=no \
--device e1000,vlan=1,mac=de:ad:be:ef:00:03 \
--net tap,name=net3,vlan=1,ifname=ovs_tap2,script=no,downscript=no \
--device e1000,vlan=1,mac=de:ad:be:ef:00:04 \
--net tap,name=net4,vlan=1,ifname=ovs_tap3,script=no,downscript=no \
--device e1000,vlan=1,mac=de:ad:be:ef:00:05 \
--net tap,name=net5,vlan=1,ifname=ovs_tap4,script=no,downscript=no &
+-device e1000,vlan=2,mac=de:ad:be:ef:00:03 \
+-net tap,name=net3,vlan=2,ifname=ovs_tap2,script=no,downscript=no \
+-device e1000,vlan=3,mac=de:ad:be:ef:00:04 \
+-net tap,name=net4,vlan=3,ifname=ovs_tap3,script=no,downscript=no \
+-device e1000,vlan=4,mac=de:ad:be:ef:00:05 \
+-net tap,name=net5,vlan=4,ifname=ovs_tap4,script=no,downscript=no &
 
 sleep 5
 
