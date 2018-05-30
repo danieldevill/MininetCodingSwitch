@@ -245,15 +245,6 @@ l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
 		//Increment arp_counter
 		arp_counter++;
 	}
-	printf("\nARP Table\n");
-	for(i=0;i<ARP_ENTRIES;i++)
-	{
-		if(arp_table[i][0] != 0)
-		{
-			printf("%lx %lx %lx \n",arp_table[i][0],arp_table[i][1],arp_table[i][2]);
-		}
-	}
-	printf("\n");
 	//Check if request
 	if(op_code != 1)
 	{
@@ -292,9 +283,8 @@ l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
 	struct rte_eth_dev_tx_buffer *buffer = tx_buffer[portid];
 
 	//Add data to tx buffer, to be sent out when full.
-	uint16_t nb_tx = rte_eth_tx_buffer(dst_port, 0, buffer, arp_mbuf);
+	rte_eth_tx_buffer(dst_port, 0, buffer, arp_mbuf);
 	rte_pktmbuf_free(arp_mbuf);
-	printf("%d Packets sent\n",nb_tx);
 }
 
 //DD

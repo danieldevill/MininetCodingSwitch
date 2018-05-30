@@ -163,3 +163,4 @@ z
 * ARP table is working as required but there is some sort of "Segmentation fault"
 	* Possible cause is with the ARP_TABLE being updated. It is not the ARP table, confirmed.
 * Problem still persists.`
+* Fixed an isolation issue (30 May) which caused all bridges to be connected together. Each ovsbrX is now isolated alowing for it to act as a LAN connection.

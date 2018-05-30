@@ -26,13 +26,13 @@ sudo qemu-system-x86_64 /var/lib/libvirt/images/mininet.qcow2 \
 
 sleep 5
 
-#Start qemu hosts A,B,C and D: Setup is done in a terminator config file
-sudo terminator -g vmcli_config &
-
-sleep 2
-
 #Start ssh terminals for the ovs vm.`
-terminator -g ovsvmcli_config
+terminator -g ovsvmcli_config &
+
+sleep 5
+
+#Start qemu hosts A,B,C and D: Setup is done in a terminator config file
+sudo terminator -g vmcli_config
 
 #Network config down
 sudo ./ifdown
