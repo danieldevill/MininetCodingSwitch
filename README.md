@@ -161,4 +161,5 @@ z
 	* And this works! No more arp requests all over the place.
 	* I need to make it automatic in the sense that the switch responds to ARP requests. 
 * ARP table is working as required but there is some sort of "Segmentation fault"
-	* Possible cause is with the ARP_TABLE being updated. I should use a pointer?	
+	* Possible cause is with the ARP_TABLE being updated. It is not the ARP table, confirmed.
+* Problem still persists.`
