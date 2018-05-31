@@ -80,10 +80,23 @@
 #define ARP_ENTRIES 100
 static uint64_t arp_table[ARP_ENTRIES][3];
 static unsigned arp_counter = 0;
-//ERROR with arp_table?
+
+//<VLAN,MAC,Type,port> table. Simular to CISCO switches? Maybe this will help in the future somewhere..
+#define MAC_ENTRIES 20
+#define STATIC 0
+#define DYNAMIC 1
+static unsigned mac_counter = 0;
+struct mac_table_entry {
+	unsigned vlan;
+	struct ether_addr d_addr;
+	unsigned type;
+	unsigned port;
+};
+struct mac_table_entry mac_fwd_table[MAC_ENTRIES]; 
 
 //Other defines by DD
 #define HW_TYPE_ETHERNET 0x0001
+static uint32_t packet_counter = 0;
 
 static volatile bool force_quit;
 
@@ -151,32 +164,89 @@ static uint64_t timer_period = 10; /* default period is 10 seconds */
 static void
 l2fwd_simple_forward(struct rte_mbuf *m, unsigned portid)
 {
-	unsigned dst_port;
 	struct rte_eth_dev_tx_buffer *buffer;
-
-	dst_port = l2fwd_dst_ports[portid];
 
 	//DD
 
-	//Dump packets into a file
-	FILE *mbuf_file;
-	mbuf_file = fopen("mbuf_dump.txt","a");
-	fprintf(mbuf_file, "\n ------------------ \n Port:%d ----",portid);
-	rte_pktmbuf_dump(mbuf_file,m,1000);
-	fclose(mbuf_file);
+    //Dump packets into a file
+    FILE *mbuf_file;
+    mbuf_file = fopen("mbuf_dump.txt","a");
+    fprintf(mbuf_file, "\n ------------------ \n Port:%d ----",portid);
+    rte_pktmbuf_dump(mbuf_file,m,1000);
+    fclose(mbuf_file);
 
 	//Get recieved packet
 	const unsigned char* data = rte_pktmbuf_mtod(m, void *); //Convert data to char.
 	//Get Ethertype
 	uint16_t ether_type = (data[12] << 8) | data[13];
-	//Check if packet is of type ARP
-	if(ether_type == ETHER_TYPE_ARP)
+
+	//Get ethernet dst and src
+	struct ether_addr d_addr = { 
+		{data[0],data[1],data[2],data[3],data[4],data[5]}
+	};
+	struct ether_addr s_addr = {
+		{data[6],data[7],data[8],data[9],data[10],data[11]}
+	};
+	//Check if MAC forwarding table has port entry for dst.
+	unsigned mac_add = 0; //Add src mac to table.
+	unsigned mac_dst_found = 0; //DST MAC not found by default.
+	for (int i=0;i<MAC_ENTRIES;i++)
 	{
-		l2fwd_arp_reply(m,portid);
-		return;
+		if(memcmp(mac_fwd_table[i].d_addr.addr_bytes,s_addr.addr_bytes,sizeof(s_addr.addr_bytes)) == 0) //Check if table contains src address in table
+		{
+			mac_add = 1; //Dont add mac address as it is already in the table.
+		}
+		//Check if packet is of type ARP. If so handle ARP reply.
+		if(unlikely(ether_type == ETHER_TYPE_ARP))
+		{
+			l2fwd_arp_reply(m,portid);
+		}
+		else if(memcmp(mac_fwd_table[i].d_addr.addr_bytes,d_addr.addr_bytes,sizeof(d_addr.addr_bytes)) == 0) //Else handle like a normal packet forward.
+		{
+			//Send packet to dst port.
+			printf("DST_MAC found, sending packet out.\n");
+			buffer = tx_buffer[mac_fwd_table[i].port];
+			rte_eth_tx_buffer(mac_fwd_table[i].port, 0, buffer, m);
+			mac_dst_found = 1;
+            printf("Packet no: %u.\n", packet_counter++);
+		}
 	}
-	buffer = tx_buffer[dst_port];
-	rte_eth_tx_buffer(dst_port, 0, buffer, m);
+
+	if(mac_dst_found == 0) //Flood the packet out to all ports
+	{
+		printf("DST_MAC not found, flooding packets.\n");
+		for (uint port = 0; port < rte_eth_dev_count(); port++)
+		{
+			if(port!=portid)
+			{
+				buffer = tx_buffer[port];
+				rte_eth_tx_buffer(port, 0, buffer, m);
+			}
+		}
+        packet_counter = packet_counter+3;
+        printf("Packet no: %u.\n", packet_counter);
+	}
+	if(mac_add == 0) //Add MAC address to MAC table.
+	{
+		mac_fwd_table[mac_counter].d_addr = s_addr;
+		mac_fwd_table[mac_counter].type = DYNAMIC;
+		mac_fwd_table[mac_counter].port = portid;
+		mac_counter++; //Increment MAC counter.
+
+		printf("Updated MAC TABLE.\n");
+		for (int i=0;i<MAC_ENTRIES;i++)
+		{
+			if(mac_fwd_table[i].d_addr.addr_bytes[0] != 0)
+			{
+				printf("%u ", mac_fwd_table[i].vlan);
+				for (uint j = 0; j < sizeof(mac_fwd_table[i].d_addr.addr_bytes); ++j)
+				{
+					printf("%02x:", mac_fwd_table[i].d_addr.addr_bytes[j]);
+				}
+				printf(" %u %u\n", mac_fwd_table[i].type,mac_fwd_table[i].port);
+			}
+		}
+	}
 }
 
 //DD.
@@ -189,7 +259,7 @@ l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
 	//Target Protocol Address
 	uint32_t trg_ptcl_addr = (arp_data[24] << 24) | (arp_data[25] << 16) | (arp_data[26] << 8) | arp_data[27];
 	//Check if port is the target protocol address.
-	if(port_ip_lookup(&trg_ptcl_addr,portid) != 0)
+	if(likely(port_ip_lookup(&trg_ptcl_addr,portid) != 0))
 	{
 		return;
 	}
@@ -279,8 +349,8 @@ l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
 	rte_memcpy(pkt_data+sizeof(eth_hdr.d_addr.addr_bytes),&trg_ptcl_addr_ar,sizeof(trg_ptcl_addr_ar)); //Append trg_pctl_addr to packet.
 	
 	//Get tx buffer of dst_port
-	unsigned dst_port = l2fwd_dst_ports[portid];
-	struct rte_eth_dev_tx_buffer *buffer = tx_buffer[portid];
+	unsigned dst_port = portid;
+	struct rte_eth_dev_tx_buffer *buffer = tx_buffer[dst_port];
 
 	//Add data to tx buffer, to be sent out when full.
 	rte_eth_tx_buffer(dst_port, 0, buffer, arp_mbuf);
@@ -725,8 +795,8 @@ main(int argc, char **argv)
 
 		printf("done: \n");
 
-		//DD. Promiscuous mode disabled.
-		//rte_eth_promiscuous_enable(portid);
+		//DD. Promiscuous mode enabled.
+		rte_eth_promiscuous_enable(portid);
 
 		printf("Port %u, MAC address: %02X:%02X:%02X:%02X:%02X:%02X\n",
 				portid,

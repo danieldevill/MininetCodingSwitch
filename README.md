@@ -164,3 +164,6 @@ z
 	* Possible cause is with the ARP_TABLE being updated. It is not the ARP table, confirmed.
 * Problem still persists.`
 * Fixed an isolation issue (30 May) which caused all bridges to be connected together. Each ovsbrX is now isolated alowing for it to act as a LAN connection.
+
+* I got ARP working and MAC switching as well. The isolation problem helped sort a bunch of other problems out as well.
+* I am disabling gateway (L3) traffic on the switch for the time being. There are some issues to sort out when IP needs to transfer over it.
