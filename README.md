@@ -167,3 +167,16 @@ z
 
 * I got ARP working and MAC switching as well. The isolation problem helped sort a bunch of other problems out as well.
 * I am disabling gateway (L3) traffic on the switch for the time being. There are some issues to sort out when IP needs to transfer over it.
+* All packet layers are being switched on l2 now! 
+* iperf tests are working in unicast and multicast.
+
+## iperf tests:
+
+* sudo ip route add 224.0.0.0/4 dev ens3 is used to set the route for multicast traffic.
+* A static config is done by setting the command in /etc/network/interfaces
+
+## Final notes:
+
+* I have moved on from this repo to start a new on called DPDK-based Coding switch. 
+* This current repo was perfect for experimenting around and learning various things, but since I have found a sort've line to persue, I will use the new repo to be more organised.
+* Final push will be today on 1st June 2018.

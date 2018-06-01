@@ -37,6 +37,6 @@ sudo terminator -g vmcli_config
 #Network config down
 sudo ./ifdown
 
-#Backup mininet working to Dropbox folder
+#Backup mininet working to Dropbox folder`
 sudo scp -P 10022 -r mininet@localhost:/usr/src/dpdk-stable-17.11.1/examples/l2fwd_daniel/* ~/Dropbox/Academics/MEng/Working/MininetCodingSwitch/l2fwd_daniel
 sudo scp -P 10022 -r mininet@localhost:/home/mininet/setup_ovsdpdk ~/Dropbox/Academics/MEng/Working/MininetCodingSwitch/

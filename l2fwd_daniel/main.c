@@ -162,23 +162,14 @@ struct rte_mempool * l2fwd_pktmbuf_pool = NULL;
 static uint64_t timer_period = 10; /* default period is 10 seconds */
 
 static void
-l2fwd_simple_forward(struct rte_mbuf *m, unsigned portid)
+l2fwd_learning_forward(struct rte_mbuf *m, unsigned portid)
 {
 	struct rte_eth_dev_tx_buffer *buffer;
 
 	//DD
 
-    //Dump packets into a file
-    FILE *mbuf_file;
-    mbuf_file = fopen("mbuf_dump.txt","a");
-    fprintf(mbuf_file, "\n ------------------ \n Port:%d ----",portid);
-    rte_pktmbuf_dump(mbuf_file,m,1000);
-    fclose(mbuf_file);
-
 	//Get recieved packet
 	const unsigned char* data = rte_pktmbuf_mtod(m, void *); //Convert data to char.
-	//Get Ethertype
-	uint16_t ether_type = (data[12] << 8) | data[13];
 
 	//Get ethernet dst and src
 	struct ether_addr d_addr = { 
@@ -196,25 +187,17 @@ l2fwd_simple_forward(struct rte_mbuf *m, unsigned portid)
 		{
 			mac_add = 1; //Dont add mac address as it is already in the table.
 		}
-		//Check if packet is of type ARP. If so handle ARP reply.
-		if(unlikely(ether_type == ETHER_TYPE_ARP))
-		{
-			l2fwd_arp_reply(m,portid);
-		}
-		else if(memcmp(mac_fwd_table[i].d_addr.addr_bytes,d_addr.addr_bytes,sizeof(d_addr.addr_bytes)) == 0) //Else handle like a normal packet forward.
+		if(memcmp(mac_fwd_table[i].d_addr.addr_bytes,d_addr.addr_bytes,sizeof(d_addr.addr_bytes)) == 0) //Else handle like a normal packet forward.
 		{
 			//Send packet to dst port.
-			printf("DST_MAC found, sending packet out.\n");
 			buffer = tx_buffer[mac_fwd_table[i].port];
-			rte_eth_tx_buffer(mac_fwd_table[i].port, 0, buffer, m);
 			mac_dst_found = 1;
-            printf("Packet no: %u.\n", packet_counter++);
+			rte_eth_tx_buffer(mac_fwd_table[i].port, 0, buffer, m);
+			packet_counter++;
 		}
 	}
-
 	if(mac_dst_found == 0) //Flood the packet out to all ports
 	{
-		printf("DST_MAC not found, flooding packets.\n");
 		for (uint port = 0; port < rte_eth_dev_count(); port++)
 		{
 			if(port!=portid)
@@ -224,16 +207,18 @@ l2fwd_simple_forward(struct rte_mbuf *m, unsigned portid)
 			}
 		}
         packet_counter = packet_counter+3;
-        printf("Packet no: %u.\n", packet_counter);
 	}
-	if(mac_add == 0) //Add MAC address to MAC table.
+	//Display number of packets sent.
+	printf(" packets forwarded. \r%u", packet_counter);
+	fflush(stdout);
+	if(unlikely(mac_add == 0)) //Add MAC address to MAC table.
 	{
 		mac_fwd_table[mac_counter].d_addr = s_addr;
 		mac_fwd_table[mac_counter].type = DYNAMIC;
 		mac_fwd_table[mac_counter].port = portid;
 		mac_counter++; //Increment MAC counter.
 
-		printf("Updated MAC TABLE.\n");
+		printf("\nUpdated MAC TABLE.\n");
 		for (int i=0;i<MAC_ENTRIES;i++)
 		{
 			if(mac_fwd_table[i].d_addr.addr_bytes[0] != 0)
@@ -358,7 +343,7 @@ l2fwd_arp_reply(struct rte_mbuf* m, unsigned portid)
 }
 
 //DD
-//Check if IP address belongs to port.
+//Check if IP address belongs to port. For use with ARP reply.
 int
 port_ip_lookup(uint32_t *trg_ptcl_addr, unsigned portid)
 {
@@ -453,7 +438,7 @@ l2fwd_main_loop(void)
 				//Send recieved packets to tx, for each packet recieved
 				m = pkts_burst[j];
 				rte_prefetch0(rte_pktmbuf_mtod(m, void *));
-				l2fwd_simple_forward(m, portid);
+				l2fwd_learning_forward(m, portid);
 			}
 		}
 	}
